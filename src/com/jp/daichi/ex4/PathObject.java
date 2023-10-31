@@ -7,6 +7,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 
+/**
+ * {@link Path2D}を利用した描画用オブジェクト
+ */
 public class PathObject extends RotationalObject {
 
     private final Path2D original;

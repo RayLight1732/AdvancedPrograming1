@@ -7,6 +7,9 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * すべての描画用オブジェクトの基底クラス
+ */
 public abstract class AObject {
 
     protected double x;//x座標
@@ -203,6 +206,7 @@ public abstract class AObject {
      * 代表座標がx,yの時のエリアに更新
      * @param x 代表座標のx
      * @param y 代表座標のy
+     * @return 更新後のエリア
      */
     protected abstract Area getArea(double x,double y);
 }

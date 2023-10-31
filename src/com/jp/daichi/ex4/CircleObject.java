@@ -6,6 +6,9 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 
+/**
+ * 円を表すオブジェクト
+ */
 public class CircleObject extends AObject {
 
     private final double radius;

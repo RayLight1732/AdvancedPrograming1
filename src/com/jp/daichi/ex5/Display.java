@@ -1,7 +1,5 @@
 package com.jp.daichi.ex5;
 
-import com.jp.daichi.ex4.AObject;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;

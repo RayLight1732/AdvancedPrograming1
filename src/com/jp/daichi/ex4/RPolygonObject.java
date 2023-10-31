@@ -31,6 +31,7 @@ public class RPolygonObject extends PathObject {
      * @param radius 半径(中心からある頂点までの距離)
      * @param nPoints 頂点の数
      * @param rotation 回転角(ラジアン)
+     * @param rotationSpeed 回転速度(ラジアン)
      * @param vector 速度ベクトル
      */
     public RPolygonObject(double x, double y, double radius, int nPoints,double rotation,double rotationSpeed, Vec2d vector) {

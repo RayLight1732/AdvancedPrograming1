@@ -7,7 +7,6 @@ public class Judge {
      * 誰かが3回勝利したらゲーム終了
      * 引数は Player配列
      * @param players 判定対象プレイヤー
-     * @return （無し）
      */
     public void startDiceGame(Player[] players) {
         startDiceGame(players,3);
@@ -18,7 +17,6 @@ public class Judge {
      * 引数は Player配列
      * @param players 判定対象プレイヤー
      * @param winCount 最終的な勝者を判定する閾値
-     * @return （無し）
      */
     public void startDiceGame(Player[] players,int winCount) {
         System.out.println("【サイコロ振りゲーム開始】");
