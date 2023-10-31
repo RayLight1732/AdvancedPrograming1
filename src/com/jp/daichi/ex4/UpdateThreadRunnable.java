@@ -5,6 +5,9 @@ import com.sun.javafx.geom.Vec2d;
 import javax.swing.*;
 import java.util.List;
 
+/**
+ * 更新用のスレッド
+ */
 public class UpdateThreadRunnable implements Runnable {
 
     private final PaintPanel panel;

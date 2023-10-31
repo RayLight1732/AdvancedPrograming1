@@ -115,8 +115,9 @@ public abstract class AObject {
      */
     public void draw(Graphics g) {
         if (g instanceof Graphics2D) {
+            //アンチエイリアシング有効化
             ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-            ((Graphics2D)g).fill(getArea(getX(),getY()));
+            ((Graphics2D)g).fill(getArea(getX(),getY()));//図形描画
         }
     }
 

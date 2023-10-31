@@ -4,6 +4,9 @@ import com.sun.javafx.geom.Vec2d;
 
 import java.awt.*;
 
+/**
+ * 回転するオブジェクト
+ */
 public abstract class RotationalObject extends AColoredObject {
 
     private double rotationSpeed;
@@ -37,18 +40,34 @@ public abstract class RotationalObject extends AColoredObject {
         preRotation = getRotation();
     }
 
+    /**
+     * 回転角を取得
+     * @return 回転角(rad)
+     */
     public double getRotation() {
         return rotation;
     }
 
+    /**
+     * 回転角を設定
+     * @param rotation 回転角(rad)
+     */
     public void setRotation(double rotation) {
         this.rotation = rotation;
     }
 
+    /**
+     * 回転速度を取得
+     * @return 回転速度(rad)
+     */
     public double getRotationSpeed() {
         return rotationSpeed;
     }
 
+    /**
+     * 回転速度を設定
+     * @param rotationSpeed 回転速度
+     */
     public void setRotationSpeed(double rotationSpeed) {
         this.rotationSpeed = rotationSpeed;
     }
