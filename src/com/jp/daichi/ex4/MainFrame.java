@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * メインクラス
+ */
 public class MainFrame{
     public static void main(String[] args) {
         JFrame frame = new JFrame();//メイン画面
