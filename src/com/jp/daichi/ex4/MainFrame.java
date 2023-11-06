@@ -28,7 +28,8 @@ public class MainFrame{
                     object = new CircleObject(e.getX(), e.getY(), speed, 30);
                 } else {
                     //二つ目以降は順に頂点の数を増やしていく
-                    object = new RPolygonObject(e.getX(), e.getY(), 40, i + 2, 0,30/360.0*2*Math.PI,speed);
+                    //object = new RPolygonObject(e.getX(), e.getY(), 40, i + 2, 0,30/360.0*2*Math.PI,speed);
+                    object = new RPolygonObject(e.getX(), e.getY(), 40, i + 2, 0,0,speed);
                 }
                 i++;
                 paintPanel.addObject(object);//追加
@@ -36,7 +37,8 @@ public class MainFrame{
         };
         paintPanel.addMouseListener(listener);//リスナー追加
 
-        Thread thread = new Thread(new UpdateThreadRunnable(paintPanel,0));//更新用のスレッド 50*9.8
+        Thread thread = new Thread(new UpdateThreadRunnable(paintPanel,50*9.8,0.9));//更新用のスレッド 50*9.8
+        thread.setPriority(Thread.MIN_PRIORITY);
         thread.start();//スレッドスタート
 
         frame.setVisible(true);//表示

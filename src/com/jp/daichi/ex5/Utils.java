@@ -14,6 +14,11 @@ public class Utils {
         return Math.sqrt(vec.x*vec.x+vec.y*vec.y);
     }
 
+    public static double getSqLength(Vec2d vec) {
+        return vec.x*vec.x+vec.y*vec.y;
+    }
+
+
     public static void multiple(Vec2d vec,double length) {
         vec.x *= length;
         vec.y *= length;
@@ -51,5 +56,9 @@ public class Utils {
 
     public static double getSqDistance(GameEntity e1,GameEntity e2) {
         return getSqDistance(e1.getX(),e1.getY(),e2.getX(),e2.getY());
+    }
+
+    public static double dot(double x1,double y1,double x2,double y2) {
+        return x1*y2 - y1*x2;
     }
 }

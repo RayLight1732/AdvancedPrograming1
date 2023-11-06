@@ -57,7 +57,7 @@ public class PaintPanel extends JPanel {
             }
             for (AObject o2:objects) {
                 //その他のオブジェクトに関して　どれかと衝突しているなら色を赤に
-                if (o1 != o2 && o1.isCollide(o2)) {
+                if (o1 != o2 && o1.isCollide(o2) != null) {
                     g.setColor(Color.RED);
                     break;
                 }
