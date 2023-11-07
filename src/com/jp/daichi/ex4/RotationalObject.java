@@ -37,6 +37,7 @@ public abstract class RotationalObject extends AColoredObject {
     @Override
     public void collideWith(AObject object,double deltaTime,double hitX,double hitY) {
         super.collideWith(object,deltaTime,hitX,hitY);
+
     }
 
     /**

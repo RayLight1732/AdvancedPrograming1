@@ -14,6 +14,14 @@ import java.util.List;
  */
 public abstract class AObject {
 
+    /**
+     * 衝突時、衝突後のベクトルを取得
+     * @param origin もととなるオブジェクト
+     * @param collide 衝突したオブジェクト
+     * @param hitX 衝突点のx座標
+     * @param hitY 衝突点のy座標
+     * @return 衝突後のベクトル
+     */
     public static Vec2d getCollidedVector(AObject origin,AObject collide,double hitX,double hitY) {
         if (collide instanceof WallObject) {
             double hVx = hitX- origin.getX();
@@ -227,6 +235,22 @@ public abstract class AObject {
      */
     public double getVecY() {
         return this.vector.y;
+    }
+
+    /**
+     * 処理用の一時的なベクトルのコピーを返す
+     * @return 処理用の一時的なベクトルのコピー
+     */
+    public Vec2d getPreVec() {
+        return new Vec2d(preVec);
+    }
+
+    /**
+     * 処理用の一時的なベクトルを設定する
+     * @param preVec 処理用の一時的なベクトル
+     */
+    public void setPreVec(Vec2d preVec) {
+        this.preVec = preVec;
     }
 
     /**

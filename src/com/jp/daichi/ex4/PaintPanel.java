@@ -45,23 +45,9 @@ public class PaintPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         //すべてのオブジェクトについて
         for (AObject o1:objects) {
-            if (o1 instanceof Colored) {
-                //coloredのインスタンスなら色設定
-                g.setColor(((Colored)o1).getColor());
-            } else {
-                //そうでないなら黒に
-                g.setColor(Color.BLACK);
-            }
-            for (AObject o2:objects) {
-                //その他のオブジェクトに関して　どれかと衝突しているなら色を赤に
-                if (o1 != o2 && o1.isCollide(o2) != null) {
-                    g.setColor(Color.RED);
-                    break;
-                }
-            }
+            g.setColor(Color.BLACK);
             o1.draw(g);//描画処理実行
         }
     }

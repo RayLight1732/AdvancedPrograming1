@@ -52,7 +52,7 @@ public abstract class AColoredObject extends AObject implements Colored {
     @Override
     public Color getColor() {
         if (color == null) {
-            return new Color(Color.HSBtoRGB(h, 1f, 1f));//hsbをrgbに変換
+            return new Color(Color.HSBtoRGB(h, 0.65f, 0.9f));//hsbをrgbに変換
         } else {
             return color;
         }
