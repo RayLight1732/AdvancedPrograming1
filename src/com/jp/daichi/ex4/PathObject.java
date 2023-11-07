@@ -13,7 +13,7 @@ import java.awt.geom.Path2D;
 public class PathObject extends RotationalObject {
 
     private final Path2D original;
-    private Path2D path;
+    protected Path2D path;
 
     public PathObject(double x, double y,double rotationSpeed, Vec2d vector, Path2D path) {
         this(x, y, rotationSpeed,vector,path,null);

@@ -11,7 +11,7 @@ import java.awt.geom.Path2D;
  */
 public class RPolygonObject extends PathObject {
 
-    private static Path2D createRPolygon(int nPoints,double radius,double rotation) {
+    public static Path2D createRPolygon(int nPoints,double radius,double rotation) {
         Path2D path = new Path2D.Double();
         path.moveTo(radius*Math.cos(rotation),radius*Math.sin(rotation));
         double deltaRotation = 2*Math.PI/nPoints;
@@ -60,4 +60,11 @@ public class RPolygonObject extends PathObject {
     public int getNPoints() {
         return nPoints;
     }
+
+    @Override
+    public void tick(double deltaTime) {
+        super.tick(deltaTime);
+    }
+
+
 }
