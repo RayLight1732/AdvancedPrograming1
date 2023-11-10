@@ -46,7 +46,7 @@ public class PaintPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         //すべてのオブジェクトについて
-        for (AObject o1:objects) {
+        for (AObject o1:getObjects()) {
             g.setColor(Color.BLACK);
             o1.draw(g);//描画処理実行
         }

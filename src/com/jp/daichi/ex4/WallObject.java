@@ -37,7 +37,7 @@ public class WallObject extends AObject {
     }
 
     @Override
-    public void collideWith(AObject object, double deltaTime,double hitX,double hitY) {
+    public void collideWith(AObject object, double deltaTime,double hitX,double hitY,boolean inner) {
 
     }
 

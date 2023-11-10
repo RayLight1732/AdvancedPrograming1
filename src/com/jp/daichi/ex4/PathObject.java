@@ -15,12 +15,12 @@ public class PathObject extends RotationalObject {
     private final Path2D original;
     protected Path2D path;
 
-    public PathObject(double x, double y,double rotationSpeed, Vec2d vector, Path2D path) {
-        this(x, y, rotationSpeed,vector,path,null);
+    public PathObject(double x, double y,double rotation,double rotationSpeed, Vec2d vector, Path2D path) {
+        this(x, y,rotation, rotationSpeed,vector,path,null);
     }
 
-    public PathObject(double x, double y, double rotationSpeed, Vec2d vector, Path2D path, Color color) {
-        super(x, y, rotationSpeed,vector,color);
+    public PathObject(double x, double y,double rotation, double rotationSpeed, Vec2d vector, Path2D path, Color color) {
+        super(x, y,rotation, rotationSpeed,vector,color);
         this.original = (Path2D) path.clone();//オリジナルのパスをコピーして保存
     }
 

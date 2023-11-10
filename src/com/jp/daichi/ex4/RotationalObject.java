@@ -10,15 +10,16 @@ import java.awt.*;
 public abstract class RotationalObject extends AColoredObject {
 
     private double rotationSpeed;
-    protected double rotation = 0;
+    protected double rotation;
     protected double preRotation = 0;
 
-    public RotationalObject(double x, double y,double rotationSpeed, Vec2d vector) {
-        this(x,y,rotationSpeed,vector,null);
+    public RotationalObject(double x, double y,double rotation,double rotationSpeed, Vec2d vector) {
+        this(x,y,rotation,rotationSpeed,vector,null);
     }
 
-    public RotationalObject(double x, double y, double rotationSpeed, Vec2d vector, Color color) {
+    public RotationalObject(double x, double y, double rotation,double rotationSpeed, Vec2d vector, Color color) {
         super(x, y, vector,color);
+        this.rotation = rotation;
         this.rotationSpeed = rotationSpeed;
     }
 
@@ -35,8 +36,8 @@ public abstract class RotationalObject extends AColoredObject {
     }
 
     @Override
-    public void collideWith(AObject object,double deltaTime,double hitX,double hitY) {
-        super.collideWith(object,deltaTime,hitX,hitY);
+    public void collideWith(AObject object,double deltaTime,double hitX,double hitY,boolean inner) {
+        super.collideWith(object,deltaTime,hitX,hitY,inner);
 
     }
 

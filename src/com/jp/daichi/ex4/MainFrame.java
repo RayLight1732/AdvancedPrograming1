@@ -46,10 +46,11 @@ public class MainFrame {
                 } else {
                     if (e.getButton() == MouseEvent.BUTTON1) {
                         //二つ目以降は順に頂点の数を増やしていく
-                        object = new RPolygonObject(e.getX(), e.getY(), 40, i + 2, Math.toRadians(90 - 180.0 / (i + 2)), 0, speed);
+                        //object = new RPolygonObject(e.getX(), e.getY(), 40, i + 2, Math.toRadians(90 - 180.0 / (i + 2)), 0, speed);
+                        object = new ResizableRPolygonObject(e.getX(),e.getY(),40,20,80,i+2,Math.toRadians(90 - 180.0 / (i + 2)),0,speed);
                     } else {
                         //右クリックした際は中心からの距離がランダムな５角形を生成
-                        object = new PathObject(e.getX(),e.getY(),0,speed,createPolygon(5,40,0));
+                        object = new PathObject(e.getX(),e.getY(),0,0,speed,createPolygon(5,40,0));
                     }
                 }
                 i++;

@@ -17,7 +17,7 @@ public class Bullet extends AGameEntity {
         path.lineTo(size,1);
         path.lineTo(0,1);
         path.closePath();
-        rotationalObject = new PathObject(x,y,0,vec,path, Color.CYAN);
+        rotationalObject = new PathObject(x,y,0,0,vec,path, Color.CYAN);
         rotationalObject.setRotation(Utils.getRotation(vec));
         rotationalObject.setOutLineColor(Color.BLACK);
         return rotationalObject;

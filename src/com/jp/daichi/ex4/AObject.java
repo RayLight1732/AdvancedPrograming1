@@ -140,9 +140,6 @@ public abstract class AObject {
     public double preX;//更新用
     public double preY;//更新用
 
-    protected List<AObject> lastCollide = new ArrayList<>();//前tickに衝突したオブジェクト
-    protected List<AObject> collide = new ArrayList<>();//現在のtickに衝突したオブジェクト
-
     protected Area area;//メモ化用
     protected TickState tickState = TickState.None;//現在の処理段階
     protected double restitutionCoefficient;//反発係数
@@ -265,24 +262,27 @@ public abstract class AObject {
         }
     }
 
+    private int collisionTickCount = 0;
+
     /**
      * 衝突判定前に実行される
      * @param deltaTime 前回からどれだけ経過したか
      */
     public void collisionTick(double deltaTime) {
-        lastCollide = collide != null ? collide : new ArrayList<>();//lastCollideを更新
-        collide = new ArrayList<>();//衝突したオブジェクト格納用list
-        if (getTickState() == TickState.CollisionTick) {
-            //二回目のcollisionTickの時 preVecを適用
-            setVector(preVec);
+        if (collisionTickCount == 0) {
+            preVec = getVector();
         }
-        //経過した時間分動かす
-        preVec = getVector();
-        preX = getX() + preVec.x * deltaTime;
-        preY = getY() + preVec.y * deltaTime;
+        collisionTickCount++;
 
+        if (getTickState() == TickState.CollisionTick) {
+            setVector(preVec);
+            preX = getX() + preVec.x * deltaTime;
+            preY = getY() + preVec.y * deltaTime;
+        } else if (getTickState() == TickState.InnerCheckTick) {
+            preX = getX();
+            preY = getY();
+        }
         area = getArea(preX,preY);
-        tickState = TickState.CollisionTick;
     }
 
     /**
@@ -290,7 +290,6 @@ public abstract class AObject {
      * @param deltaTime 前回からどれだけ経過したか(秒)
      */
     public void tick(double deltaTime) {
-        tickState = TickState.ProcessTick;
         //マークした座標に更新
         x = preX;
         y = preY;
@@ -326,31 +325,25 @@ public abstract class AObject {
      * @param deltaTime 前回からどれだけ経過したか(秒)
      * @param hitX 衝突時の共通部分の中心x座標
      * @param hitY 衝突時の共通部分の中心y座標
+     * @param inner めり込んでいる場合true
      */
-    public void collideWith(AObject object,double deltaTime,double hitX,double hitY) {
-        /*
-        collide.add(object);//衝突したことを記録
-        if (lastCollide.contains(object)) {
-            //めり込んでいる可能性
-            double vecX = getX()-object.getX();//離れる方向
-            double vecY = getY()-object.getY();//離れる方向
-            double length = Math.sqrt(vecX*vecX+vecY*vecY);//長さ
-            vecX /= length;//正規化
-            vecY /= length;//正規化
-            vecX *= 100*deltaTime;//長さを秒間40に
-            vecY *= 100*deltaTime;//長さを秒間40に
-            preVec.x += vecX;//次の速度に加算
-            preVec.y += vecY;//次の速度に加算
+    public void collideWith(AObject object,double deltaTime,double hitX,double hitY,boolean inner) {
+        if (inner) {
+            Vec2d vec2d = new Vec2d(getX()-hitX,getY()-hitY);
+            Utils.normalize(vec2d);
+            if (object instanceof WallObject) {
+                Utils.multiple(vec2d,20);
+            } else {
+                Utils.multiple(vec2d, 200);
+            }
+            preVec = vec2d;
+            preX = getX()+preVec.x*deltaTime;
+            preY = getY()+preVec.y*deltaTime;
         } else {
-            preVec = object.getVector();//衝突した際速度を入れ替え
+            setPreVec(getCollidedVector(this, object, hitX, hitY));
             preX = getX();//衝突したら動かない
             preY = getY();//衝突したら動かない
-        }*/
-
-        preVec = getCollidedVector(this,object,hitX,hitY);
-        preX = getX();//衝突したら動かない
-        preY = getY();//衝突したら動かない
-
+        }
     }
 
     /**
@@ -378,6 +371,13 @@ public abstract class AObject {
      */
     public TickState getTickState() {
         return tickState;
+    }
+
+    public void setTickState(TickState tickState) {
+        this.tickState = tickState;
+        if (tickState == TickState.InnerCheckTick) {
+            collisionTickCount = 0;
+        }
     }
 
     /**

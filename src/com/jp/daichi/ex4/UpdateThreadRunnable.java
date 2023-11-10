@@ -4,10 +4,7 @@ import com.jp.daichi.ex5.Utils;
 import com.sun.javafx.geom.Vec2d;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 更新用のスレッド
@@ -46,60 +43,72 @@ public class UpdateThreadRunnable implements Runnable {
         long lastTime = System.currentTimeMillis();//前回処理が行われた時間
         while (true) {
             long current = System.currentTimeMillis();//現在の時間
-            double deltaTime = (current-lastTime)/1000.0;//ミリ秒->秒に変換
+            double deltaTime = (current - lastTime) / 1000.0;//ミリ秒->秒に変換
             List<AObject> objects = panel.getObjects();//登録されているオブジェクトのリスト
 
             double margin = 400;//壁の余裕
             //壁追加
-            objects.add(new WallObject(-margin,-margin, margin, panel.getHeight()+2* margin));
-            objects.add(new WallObject(-margin,-margin, panel.getWidth()+2* margin, margin));
-            objects.add(new WallObject(panel.getWidth(),-margin, margin, panel.getHeight()+2* margin));
-            objects.add(new WallObject(-margin,panel.getHeight(), panel.getWidth()+2* margin, margin,e));//下
+            objects.add(new WallObject(-margin, -margin, margin, panel.getHeight() + 2 * margin));
+            objects.add(new WallObject(-margin, -margin, panel.getWidth() + 2 * margin, margin));
+            objects.add(new WallObject(panel.getWidth(), -margin, margin, panel.getHeight() + 2 * margin));
+            objects.add(new WallObject(-margin, panel.getHeight(), panel.getWidth() + 2 * margin, margin, e));//下
+
+            objects.forEach(o -> {
+                o.setTickState(TickState.InnerCheckTick);
+                o.collisionTick(deltaTime);
+            });
+            Set<AObject> inner = new HashSet<>();
+            doubleLoop(objects, ((o1, o2) -> {
+                if (o1 instanceof WallObject && o2 instanceof WallObject) {
+                    return;
+                }
+                Vec2d hitVec = o1.isCollide(o2);
+                if (hitVec != null) {
+                    inner.add(o1);
+                    inner.add(o2);
+                    o1.collideWith(o2, deltaTime, hitVec.x, hitVec.y, true);//衝突したことを通知
+                    o2.collideWith(o1, deltaTime, hitVec.x, hitVec.y, true);//衝突したことを通知
+                }
+            }));
+
+            objects.forEach(o -> o.setTickState(TickState.CollisionTick));
 
             boolean collide;//衝突したか
             int loopCount = 0;//ループした回数
 
-            Set<AObject> hitObjectSet = new HashSet<>();//衝突が起こったオブジェクト収納用セット
             do {
-                hitObjectSet.clear();
                 collide = false;
-                for (AObject object: objects) {
-                    object.collisionTick(deltaTime);//衝突前処理を行う
-                }
-                for (int i = 0; i < objects.size();i++) {
+                objects.forEach(o -> o.collisionTick(deltaTime));//衝突前処理
+                for (int i = 0; i < objects.size(); i++) {
                     AObject object1 = objects.get(i);//判定対象オブジェクト1
-                     for (int i2 = i+1; i2 < objects.size();i2++) {
+                    for (int i2 = i + 1; i2 < objects.size(); i2++) {
                         AObject object2 = objects.get(i2);//判定対象オブジェクト2
+                        if (inner.contains(object1) && inner.contains(object2)) {
+                            continue;
+                        }
                         if (object1 instanceof WallObject && object2 instanceof WallObject) {
                             continue;
                         }
                         Vec2d hitVec = object1.isCollide(object2);//衝突したか
                         if (hitVec != null) {
                             collide = true;
-                            object1.collideWith(object2,deltaTime,hitVec.x, hitVec.y);//衝突したことを通知
-                            object2.collideWith(object1,deltaTime,hitVec.x,hitVec.y);//衝突したことを通知
                             loopCount++;
-                            hitObjectSet.add(object1);
-                            hitObjectSet.add(object2);
+                            object1.collideWith(object2, deltaTime, hitVec.x, hitVec.y, false);//衝突したことを通知
+                            object2.collideWith(object1, deltaTime, hitVec.x, hitVec.y, false);//衝突したことを通知
                         }
                     }
                 }
+
             } while (collide && loopCount < maxLoop);
             if (loopCount >= maxLoop) {
                 System.out.println("over loop");
-                //最後まで残っていたらめり込んでいる可能性がある(もしくは衝突回数が多すぎる)どちらにせよ邪魔なので消す
-                for (AObject aObject:hitObjectSet) {
-                    if (!(aObject instanceof WallObject)) {
-                        panel.removeObject(aObject);
-                    }
-                }
             }
 
-
-            for (AObject object:objects) {//すべてのオブジェクトについて
-                object.tick(deltaTime);//更新処理
-                object.setVecY(object.getVecY()+gravity*deltaTime);
-            }
+            objects.forEach(o->{
+                o.setTickState(TickState.ProcessTick);
+                o.tick(deltaTime);
+                o.setVecY(o.getVecY()+gravity*deltaTime);
+            });
 
             SwingUtilities.invokeLater(updateSwing);//更新
             lastTime = current;//時間更新
@@ -145,5 +154,19 @@ public class UpdateThreadRunnable implements Runnable {
      */
     public double getE() {
         return e;
+    }
+
+    public void doubleLoop(List<AObject> objects,TwoObjectRunnable runnable) {
+        for (int i = 0; i < objects.size();i++) {
+            AObject object1 = objects.get(i);//判定対象オブジェクト1
+            for (int i2 = i + 1; i2 < objects.size(); i2++) {
+                AObject object2 = objects.get(i2);//判定対象オブジェクト2
+                runnable.run(object1,object2);
+            }
+        }
+    }
+
+    public interface TwoObjectRunnable {
+        void run(AObject o1,AObject o2);
     }
 }

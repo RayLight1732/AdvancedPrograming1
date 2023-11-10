@@ -18,7 +18,7 @@ public class Player extends ALivingEntity {
         path.lineTo(0,0);
         path.lineTo(Math.cos(Math.toRadians(-140))*size,Math.sin(Math.toRadians(-140))*size);
         path.closePath();
-        return new PathObject(x,y,0,new Vec2d(),path,Color.RED);
+        return new PathObject(x,y,0,0,new Vec2d(),path,Color.RED);
     }
 
     private double bulletCoolTime = 0;//弾発射のクールタイム

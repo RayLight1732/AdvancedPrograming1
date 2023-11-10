@@ -9,21 +9,28 @@ import java.awt.geom.Path2D;
 
 public class ResizableRPolygonObject extends RPolygonObject {
 
+    private double minRadius;
+    private double maxRadius;
     private double radius = getRadius();
 
-    public ResizableRPolygonObject(double x, double y, double radius, int nPoints,double rotation,double rotationSpeed, Vec2d vector) {
-        this(x, y, radius,nPoints,rotation,rotationSpeed,vector,null);
+    public ResizableRPolygonObject(double x, double y, double radius,double minRadius,double maxRadius, int nPoints,double rotation,double rotationSpeed, Vec2d vector) {
+        this(x, y, radius,minRadius,maxRadius,nPoints,rotation,rotationSpeed,vector,null);
     }
 
-    public ResizableRPolygonObject(double x, double y, double radius, int nPoints, double rotation, double rotationSpeed, Vec2d vector, Color color) {
+    public ResizableRPolygonObject(double x, double y, double radius,double minRadius,double maxRadius, int nPoints, double rotation, double rotationSpeed, Vec2d vector, Color color) {
         super(x, y, radius, nPoints, rotation, rotationSpeed, vector, color);
+        if (minRadius > maxRadius) {
+            throw new IllegalArgumentException("maxRadius greater than minRadius");
+        }
+        this.maxRadius = maxRadius;
+        this.minRadius = minRadius;
     }
 
     @Override
     protected Area getArea(double x, double y) {
         AffineTransform transform = AffineTransform.getTranslateInstance(x,y);//移動して
         transform.rotate(getRotation());//回転
-        path = createRPolygon(getNPoints(),getRadius(),getRotation());
+        path = createRPolygon(getNPoints(),getRadius());
         path.transform(transform);
         return new Area(path);
     }
@@ -33,12 +40,12 @@ public class ResizableRPolygonObject extends RPolygonObject {
     @Override
     public void tick(double deltaTime) {
         radius += deltaTime*5*direction;
-        if (radius > super.getRadius()*10) {
+        if (radius > maxRadius) {
             direction = -1;
-            radius = super.getRadius()*10;
-        } else if (radius < super.getRadius()/2) {
+            radius = maxRadius;
+        } else if (radius < minRadius) {
             direction = 1;
-            radius = super.getRadius()/2;
+            radius = minRadius;
         }
         super.tick(deltaTime);
     }
