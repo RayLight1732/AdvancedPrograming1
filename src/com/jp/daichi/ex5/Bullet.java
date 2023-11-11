@@ -45,6 +45,11 @@ public class Bullet extends AGameEntity {
     }
 
     @Override
+    public int getCollisionPriority() {
+        return 100;
+    }
+
+    @Override
     public void collideWith(GameEntity entity) {
         if (entity != holder && entity instanceof LivingEntity) {
             ((LivingEntity)entity).attackedBy(holder,getDamage());

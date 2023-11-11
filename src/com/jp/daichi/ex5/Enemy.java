@@ -13,7 +13,12 @@ public class Enemy extends ALivingEntity {
 
     @Override
     public boolean doCollision(GameEntity entity) {
-        return false;
+        return !(entity instanceof Enemy);
+    }
+
+    @Override
+    public int getCollisionPriority() {
+        return 10;
     }
 
     @Override

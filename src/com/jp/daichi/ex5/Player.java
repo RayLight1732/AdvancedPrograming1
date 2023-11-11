@@ -39,6 +39,11 @@ public class Player extends ALivingEntity {
     }
 
     @Override
+    public int getCollisionPriority() {
+        return 0;
+    }
+
+    @Override
     public void collideWith(GameEntity entity) {
 
     }

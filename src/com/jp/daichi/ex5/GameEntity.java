@@ -16,6 +16,8 @@ public interface GameEntity {
      */
     boolean doCollision(GameEntity entity);
 
+    int getCollisionPriority();
+
     void collideWith(GameEntity entity);
 
     void collisionTick(double deltaTime);

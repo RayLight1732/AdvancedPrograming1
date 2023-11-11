@@ -50,10 +50,15 @@ public class SimpleGame implements Game {
                     System.out.println("not visible2");
                     continue;
                 }
-                if (e1.doCollision(e2) || e2.doCollision(e1)) {
-                    if (e1.isCollide(e2)) {
-                        e1.collideWith(e2);//衝突したことを通知
-                        e2.collideWith(e1);//衝突したことを通知
+                if (e1.getCollisionPriority() > e2.getCollisionPriority()) {
+                    if (e1.doCollision(e2)) {
+                        e1.collideWith(e2);
+                        e2.collideWith(e1);
+                    }
+                } else {
+                    if (e2.doCollision(e1)) {
+                        e1.collideWith(e2);
+                        e2.collideWith(e1);
                     }
                 }
             }
