@@ -1,13 +1,10 @@
 package com.jp.daichi.ex4;
 
-import com.jp.daichi.ex5.Utils;
-import com.sun.javafx.geom.Vec2d;
+import com.jp.daichi.ex5.utils.Utils;
 
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * すべての描画用オブジェクトの基底クラス
@@ -124,7 +121,7 @@ public abstract class AObject {
                     result = origin.getVector();
             }
 
-            Utils.multiple(result,origin.getRestitutionCoefficient()*collide.getRestitutionCoefficient());
+            result.multiple(origin.getRestitutionCoefficient()*collide.getRestitutionCoefficient());
             return result;
         } else {
             return collide.getVector();
@@ -256,8 +253,6 @@ public abstract class AObject {
      */
     public void draw(Graphics g) {
         if (g instanceof Graphics2D) {
-            //アンチエイリアシング有効化
-            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
             ((Graphics2D)g).fill(getArea(getX(),getY()));//図形描画
         }
     }
@@ -330,11 +325,11 @@ public abstract class AObject {
     public void collideWith(AObject object,double deltaTime,double hitX,double hitY,boolean inner) {
         if (inner) {
             Vec2d vec2d = new Vec2d(getX()-hitX,getY()-hitY);
-            Utils.normalize(vec2d);
+            vec2d.normalize();
             if (object instanceof WallObject) {
-                Utils.multiple(vec2d,20);
+                vec2d.multiple(20);
             } else {
-                Utils.multiple(vec2d, 200);
+                vec2d.multiple(200);
             }
             preVec = vec2d;
             preX = getX()+preVec.x*deltaTime;

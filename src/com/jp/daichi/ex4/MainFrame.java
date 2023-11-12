@@ -1,10 +1,6 @@
 package com.jp.daichi.ex4;
 
-import com.sun.javafx.geom.Vec2d;
-
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

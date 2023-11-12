@@ -3,11 +3,14 @@ package com.jp.daichi.ex5;
 import com.jp.daichi.ex4.RotationalObject;
 
 public abstract class ALivingEntity extends AGameEntity implements LivingEntity {
-    protected double hp;
+
+    private double maxHP;
+    private double hp;
     protected boolean isDead = false;
 
     public ALivingEntity(Game game,double hp,double size,RotationalObject displayEntity) {
         super(game,size,displayEntity);
+        this.maxHP = hp;
         this.hp = hp;
     }
 
@@ -18,7 +21,17 @@ public abstract class ALivingEntity extends AGameEntity implements LivingEntity 
 
     @Override
     public void setHP(double hp) {
-        this.hp = hp;
+        this.hp = Math.min(hp,maxHP);
+    }
+
+    @Override
+    public double setMaxHP(double maxHP) {
+        return this.maxHP = maxHP;
+    }
+
+    @Override
+    public double getMaxHP() {
+        return maxHP;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.jp.daichi.ex5;
 
+import com.jp.daichi.ex5.enemy.Enemy;
+import com.jp.daichi.ex5.enemy.ThickBeamTurret;
+
 import javax.swing.*;
 
 public class MainFrame{
@@ -13,11 +16,11 @@ public class MainFrame{
 
         SimpleGame game = new SimpleGame();
         Display display = new Display(game);//描画用パネル
-        game.setPanel(display);
         frame.add(display);//パネル追加
         keyBind = new KeyBind(display);
-        Player player = new Player(game,display,300,300,50);
-        Enemy enemy = new TurretEnemy(game,500,300,30,player);
+        Player player = new Player(game,300,300,30);
+        //Enemy enemy = new TurretEnemy(game,500,300,5,30,player);
+        Enemy enemy = new ThickBeamTurret(game,player,500,300,5,30);
         game.addEntity(player);
         game.addEntity(enemy);
         frame.setVisible(true);//表示

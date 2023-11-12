@@ -1,15 +1,18 @@
-package com.jp.daichi.ex5;
+package com.jp.daichi.ex5.bullet;
 
-import com.sun.javafx.geom.Vec2d;
-
-import java.util.stream.Collectors;
+import com.jp.daichi.ex4.Vec2d;
+import com.jp.daichi.ex5.Game;
+import com.jp.daichi.ex5.GameEntity;
+import com.jp.daichi.ex5.utils.Utils;
+import com.jp.daichi.ex5.enemy.Enemy;
+import com.jp.daichi.ex5.particles.Explosion;
 
 public class Missile extends Bullet {
 
     private double life;
     private double rotateSpeed;
     private double range = 300;
-    public Missile(Game game, GameEntity holder, double size,double life, double x, double y, Vec2d vec,double rotateSpeed, double damage) {
+    public Missile(Game game, GameEntity holder, double size, double life, double x, double y, Vec2d vec, double rotateSpeed, double damage) {
         super(game, holder, size, x, y, vec, damage);
         this.rotateSpeed = rotateSpeed;
         this.life = life;
@@ -21,10 +24,11 @@ public class Missile extends Bullet {
         life -= deltaTime;
         if (life < 0) {
             game.removeEntity(this);
+            game.addParticle(new Explosion(getX(),getY(),size));
             return;
         }
-        Vec2d thisDirection = Utils.getDirection(this);//このエンティティの方向ベクトル
-        Utils.multiple(thisDirection,range);
+        Vec2d thisDirection = Utils.getDirectionVector(this);//このエンティティの方向ベクトル
+        thisDirection.multiple(range);
         double centerX = getX()+thisDirection.x;
         double centerY = getY()+thisDirection.y;
         GameEntity target = game.getEntities().stream().filter(it -> it instanceof Enemy).min((o1, o2) -> (int) (Utils.getSqDistance(centerX,centerY,o1.getX(),o1.getY()) - Utils.getSqDistance(centerX,centerY,o2.getX(),o2.getY()))).orElse(null);//このエンティティとの距離でソート
@@ -32,7 +36,7 @@ public class Missile extends Bullet {
             return;
         }
         Vec2d direction = new Vec2d(target.getX()-getX(),target.getY()-getY());//マウスポインタへの方向ベクトル
-        if (Utils.getLength(direction) > 0) {//長さが0以上の時
+        if (direction.getLength() > 0) {//長さが0以上の時
             double angle = Utils.getRotation(direction);
             double delta = angle - getRotation()%(Math.PI*2);//現在の角度との差
             delta %= 2*Math.PI;//0~2*PIに正規化
@@ -46,9 +50,9 @@ public class Missile extends Bullet {
                 delta = Math.signum(delta)*rotateSpeed*deltaTime;//limitに制限
             }
             setRotation(getRotation()+delta);//角度更新
-            double length = Utils.getLength(getVector());
-            Vec2d vec = Utils.getDirection(this);
-            Utils.multiple(vec,length);
+            double length = getVector().getLength();
+            Vec2d vec = Utils.getDirectionVector(this);
+            vec.multiple(length);
             setVector(vec);
         }
     }

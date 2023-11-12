@@ -1,7 +1,8 @@
 package com.jp.daichi.ex5;
 
 import com.jp.daichi.ex4.RotationalObject;
-import com.sun.javafx.geom.Vec2d;
+import com.jp.daichi.ex4.TickState;
+import com.jp.daichi.ex4.Vec2d;
 
 import java.awt.*;
 import java.awt.geom.Area;
@@ -22,11 +23,14 @@ public abstract class AGameEntity implements GameEntity {
 
     @Override
     public void collisionTick(double deltaTime) {
+        displayEntity.setTickState(TickState.InnerCheckTick);
+        displayEntity.setTickState(TickState.CollisionTick);
         displayEntity.collisionTick(deltaTime);
     }
 
     @Override
     public void tick(double deltaTime) {
+        displayEntity.setTickState(TickState.ProcessTick);
         displayEntity.tick(deltaTime);
     }
 
@@ -71,7 +75,7 @@ public abstract class AGameEntity implements GameEntity {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
         displayEntity.draw(g);
     }
 
@@ -108,5 +112,10 @@ public abstract class AGameEntity implements GameEntity {
     @Override
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 }

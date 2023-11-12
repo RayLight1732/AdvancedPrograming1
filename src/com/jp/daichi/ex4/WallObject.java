@@ -1,7 +1,5 @@
 package com.jp.daichi.ex4;
 
-import com.sun.javafx.geom.Vec2d;
-
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 

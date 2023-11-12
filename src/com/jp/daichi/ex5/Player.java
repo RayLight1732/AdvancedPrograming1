@@ -2,9 +2,10 @@ package com.jp.daichi.ex5;
 
 import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.RotationalObject;
-import com.sun.javafx.geom.Vec2d;
+import com.jp.daichi.ex4.Vec2d;
+import com.jp.daichi.ex5.bullet.Missile;
+import com.jp.daichi.ex5.utils.Utils;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Path2D;
@@ -22,10 +23,8 @@ public class Player extends ALivingEntity {
     }
 
     private double bulletCoolTime = 0;//弾発射のクールタイム
-    private final JPanel panel;
-    public Player(Game game,JPanel panel,double x, double y, double size){
+    public Player(Game game,double x, double y, double size){
         super(game,20,size,getPlayerShape(size,x,y,new Vec2d()));
-        this.panel = panel;
         MainFrame.keyBind.addKeyBind(KeyEvent.VK_W);//キーを登録
         MainFrame.keyBind.addKeyBind(KeyEvent.VK_A);//キーを登録
         MainFrame.keyBind.addKeyBind(KeyEvent.VK_S);//キーを登録
@@ -39,7 +38,7 @@ public class Player extends ALivingEntity {
     }
 
     @Override
-    public int getCollisionPriority() {
+    public int getCollisionRulePriority() {
         return 0;
     }
 
@@ -73,21 +72,9 @@ public class Player extends ALivingEntity {
             forceRotate = true;
         }
         if (forceRotate) {
-            Vec2d direction = new Vec2d(rotateTargetX-getX(),rotateTargetY-getY());//マウスポインタへの方向ベクトル
-            if (Utils.getLength(direction) > 0) {//長さが0以上の時
-                double angle = Utils.getRotation(direction);
-                double delta = angle - getRotation()%(Math.PI*2);//現在の角度との差
-                delta %= 2*Math.PI;//0~2*PIに正規化
-                //deltaの絶対値をなるべく小さくする
-                if (delta > Math.PI) {//180以上であれば
-                    delta -= 2*Math.PI;//マイナスで表す
-                } else if (delta < -Math.PI) {//-180以下であれば
-                    delta += 2*Math.PI;//プラスで表す
-                }
-                if (Math.abs(delta) > Utils.rotateSpeed*deltaTime) {//deltaがlimitよりも大きければ
-                    delta = Math.signum(delta)*Utils.rotateSpeed*deltaTime;//limitに制限
-                }
-                setRotation(getRotation()+delta);//角度更新
+            Vec2d direction = new Vec2d(rotateTargetX-getX(),rotateTargetY-getY());//向かうべきベクトル
+            if (direction.getLength() > 0) {//長さが0以上の時
+                setRotation(Utils.getRotation(direction,getRotation(),Utils.rotateSpeed*deltaTime));//角度更新
             }
         } else {
             if (MainFrame.keyBind.isPressed(KeyEvent.VK_A) && !MainFrame.keyBind.isPressed(KeyEvent.VK_D)) {//wキーが押されて、sキーが押されていないとき
@@ -98,7 +85,7 @@ public class Player extends ALivingEntity {
         }
 
         Vec2d vec2d = getVector();
-        double vecLength = Utils.getLength(vec2d);//ベクトルの長さ取得
+        double vecLength = vec2d.getLength();//ベクトルの長さ取得
         double deltaLength = Utils.playerSpeedStep*deltaTime;//一秒間にplayerSpeedStepだけ変化するとき、deltaTime秒で変化する量
         if (MainFrame.keyBind.isPressed(KeyEvent.VK_W) && !MainFrame.keyBind.isPressed(KeyEvent.VK_S)) {//wキーが押されて、sキーが押されていないとき
             vecLength = Math.min(vecLength+deltaLength,Utils.playerSpeed);//最大値設定
@@ -106,22 +93,22 @@ public class Player extends ALivingEntity {
             vecLength = Math.max(vecLength-deltaLength,0);//最小値0
         }
 
-        Vec2d direction = Utils.getDirection(this);//方向ベクトル取得
-        Utils.multiple(direction,vecLength);//長さ指定
+        Vec2d direction = Utils.getDirectionVector(this);//方向ベクトル取得
+        direction.multiple(vecLength);//長さ指定
         setVector(direction);//ベクトル設定
 
         if (MainFrame.keyBind.isPressed(KeyEvent.VK_SPACE) && canShootBullet()) {
-            direction = Utils.getDirection(this);
+            direction = Utils.getDirectionVector(this);
             Vec2d shootPos = new Vec2d(getX()+direction.x*size,getY()+direction.y*size);
-            Utils.multiple(direction,Utils.playerBulletSpeed);
+            direction.multiple(Utils.playerBulletSpeed);
 
             //Bullet bullet = new Bullet(game,this,30,shootPos.x,shootPos.y,direction,1);
             //Missile bullet = new Missile(game,this,30,5,shootPos.x,shootPos.y,direction,1);
 
             for (int i = 0;i < 4;i++) {
                 double rotation = getRotation()+(1-2*(i%2))*Math.toRadians(10+(int) (i/2)*10);//(1-2*(i%2))　偶数であれば1,奇数であれば-1
-                Vec2d missileDirection = Utils.getDirection(rotation);
-                Utils.multiple(missileDirection,Utils.playerBulletSpeed);
+                Vec2d missileDirection = Utils.getDirectionVector(rotation);
+                missileDirection.multiple(Utils.playerBulletSpeed);
                 game.addEntity(new Missile(game,this,30,2.5,getX(),getY(),missileDirection,Utils.rotateSpeed*1.5,0.5));
             }
 

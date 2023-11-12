@@ -1,20 +1,17 @@
 package com.jp.daichi.ex4;
 
-import com.sun.javafx.geom.Vec2d;
-
-import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 
 /**
  * 円を表すオブジェクト
  */
-public class CircleObject extends AObject {
+public class CircleObject extends RotationalObject {
 
     private final double radius;
 
     public CircleObject(double x, double y, Vec2d vector,double radius) {
-        super(x, y, vector);
+        super(x, y,0,0,vector);
         this.radius = radius;
     }
 

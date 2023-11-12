@@ -1,14 +1,24 @@
 package com.jp.daichi.ex5;
 
-import javax.swing.*;
+import com.jp.daichi.ex5.particles.Particle;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SimpleGame implements Game {
 
     private final List<GameEntity> entityList = new ArrayList<>();//登録されているエンティティのリスト
+    private List<Particle> particles = new ArrayList<>();//登録されているパーティクルのリスト
     private GameState state;
-    private JPanel panel;
     @Override
     public List<GameEntity> getEntities() {
         return new ArrayList<>(entityList);//コピーして返却
@@ -42,21 +52,18 @@ public class SimpleGame implements Game {
             for (int i2 = i+1; i2 < entities.size();i2++) {
                 GameEntity e2 = entities.get(i2);//判定対象オブジェクト2
                 if (!e1.isVisible()) {
-                    System.out.println("not visible");
-                    System.out.println(e1.getClass());
                     continue loop1;
                 }
                 if (!e2.isVisible()) {
-                    System.out.println("not visible2");
                     continue;
                 }
-                if (e1.getCollisionPriority() > e2.getCollisionPriority()) {
-                    if (e1.doCollision(e2)) {
+                if (e1.getCollisionRulePriority() > e2.getCollisionRulePriority()) {
+                    if (e1.doCollision(e2) && e1.isCollide(e2)) {
                         e1.collideWith(e2);
                         e2.collideWith(e1);
                     }
                 } else {
-                    if (e2.doCollision(e1)) {
+                    if (e2.doCollision(e1) && e2.isCollide(e1)) {
                         e1.collideWith(e2);
                         e2.collideWith(e1);
                     }
@@ -67,20 +74,42 @@ public class SimpleGame implements Game {
         for (GameEntity e : entities) {
             e.tick(deltaTime);//ティック処理
         }
-    }
+        particles = particles.stream().filter(p->!p.isEndDrawing()).collect(Collectors.toList());
+        for (Particle particle:new ArrayList<>(particles)) {
+            particle.tick(deltaTime);
+        }
 
-    public void setPanel(JPanel panel) {
-        this.panel = panel;
     }
 
     @Override
     public int getWidth() {
-        return panel.getWidth();
+        return 1920;
     }
 
     @Override
     public int getHeight() {
-        return panel.getHeight();
+        return 1080;
     }
+
+    @Override
+    public void addParticle(Particle particle) {
+        particles.add(particle);
+    }
+
+    @Override
+    public List<Particle> getParticles() {
+        return new ArrayList<>(particles);
+    }
+
+    @Override
+    public void drawEntity(Graphics2D g) {
+        getEntities().forEach(e->e.draw(g));
+    }
+
+    @Override
+    public void drawParticle(Graphics2D g) {
+        getParticles().forEach(p->p.draw(g));
+    }
+
 
 }

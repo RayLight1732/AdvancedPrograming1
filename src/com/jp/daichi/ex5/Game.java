@@ -1,5 +1,8 @@
 package com.jp.daichi.ex5;
 
+import com.jp.daichi.ex5.particles.Particle;
+
+import java.awt.*;
 import java.util.List;
 
 public interface Game {
@@ -45,4 +48,20 @@ public interface Game {
      * @return 高さ
      */
     int getHeight();
+
+    /**
+     * パーティクルを追加
+     * @param particle 追加するパーティクル
+     */
+    void addParticle(Particle particle);
+
+    /**
+     * パーティクルのリストのコピーを取得
+     * @return 登録されているパーティクルのリストのコピー
+     */
+    List<Particle> getParticles();
+
+    void drawEntity(Graphics2D g);
+
+    void drawParticle(Graphics2D g);
 }

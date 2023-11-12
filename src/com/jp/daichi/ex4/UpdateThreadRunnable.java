@@ -1,10 +1,9 @@
 package com.jp.daichi.ex4;
 
-import com.jp.daichi.ex5.Utils;
-import com.sun.javafx.geom.Vec2d;
-
 import javax.swing.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 更新用のスレッド

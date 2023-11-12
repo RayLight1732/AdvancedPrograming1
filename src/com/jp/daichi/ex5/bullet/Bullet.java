@@ -1,35 +1,42 @@
-package com.jp.daichi.ex5;
+package com.jp.daichi.ex5.bullet;
 
 import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.RotationalObject;
-import com.sun.javafx.geom.Vec2d;
-
+import com.jp.daichi.ex4.Vec2d;
+import com.jp.daichi.ex5.*;
+import com.jp.daichi.ex5.utils.Utils;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
 public class Bullet extends AGameEntity {
 
-    private static RotationalObject getBulletShape(double size,double x,double y,Vec2d vec) {
+    private static RotationalObject getBulletShape(double length, double width, double x, double y, Vec2d vec) {
         RotationalObject rotationalObject;
         Path2D path = new Path2D.Double();
-        path.moveTo(0,-1);
-        path.lineTo(size,-1);
-        path.lineTo(size,1);
-        path.lineTo(0,1);
+        path.moveTo(0,-width);
+        path.lineTo(length,-width);
+        path.lineTo(length,width);
+        path.lineTo(0,width);
         path.closePath();
         rotationalObject = new PathObject(x,y,0,0,vec,path, Color.CYAN);
         rotationalObject.setRotation(Utils.getRotation(vec));
-        rotationalObject.setOutLineColor(Color.BLACK);
+        System.out.println(rotationalObject.getRotation());
+        //rotationalObject.setOutLineColor(Color.BLACK);
         return rotationalObject;
     }
 
     private final GameEntity holder;
     private final double damage;
-    public Bullet(Game game,GameEntity holder,double size, double x, double y, Vec2d vec, double damage) {
-        super(game,size,getBulletShape(size,x,y,vec));
+    public Bullet(Game game, GameEntity holder, double size, double x, double y, Vec2d vec, double damage) {
+        this(game,holder,size,1,x,y,vec,damage);
+    }
+
+    public Bullet(Game game, GameEntity holder, double length,double width, double x, double y, Vec2d vec, double damage) {
+        super(game,length,getBulletShape(length,width,x,y,vec));
         this.holder = holder;
         this.damage = damage;
     }
+
 
     public GameEntity getHolder() {
         return holder;
@@ -45,24 +52,22 @@ public class Bullet extends AGameEntity {
     }
 
     @Override
-    public int getCollisionPriority() {
+    public int getCollisionRulePriority() {
         return 100;
     }
 
     @Override
     public void collideWith(GameEntity entity) {
-        if (entity != holder && entity instanceof LivingEntity) {
-            ((LivingEntity)entity).attackedBy(holder,getDamage());
-            game.removeEntity(this);
-        }
+        ((LivingEntity)entity).attackedBy(holder,getDamage());
+        getGame().removeEntity(this);
     }
 
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-        if (getX() < -200 || game.getWidth()+200 < getX()
-                || getY() < -200 || game.getHeight()+200 < getY()) {
-            game.removeEntity(this);
+        if (getX() < -200 || getGame().getWidth()+200 < getX()
+                || getY() < -200 || getGame().getHeight()+200 < getY()) {
+            getGame().removeEntity(this);
         }
     }
 
