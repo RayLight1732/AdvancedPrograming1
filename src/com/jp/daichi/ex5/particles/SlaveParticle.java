@@ -20,7 +20,7 @@ public abstract class SlaveParticle implements Particle {
     }
 
     public Vec2d getPosition() {
-        return positionConverter.convert(new Vec2d(master.getX(),master.getY()));
+        return positionConverter.convert(master.getX(),master.getY());
     }
 
     public double getRotation() {

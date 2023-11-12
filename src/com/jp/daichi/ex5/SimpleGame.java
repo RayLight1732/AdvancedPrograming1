@@ -26,7 +26,11 @@ public class SimpleGame implements Game {
 
     @Override
     public boolean removeEntity(GameEntity entity) {
-        return entityList.remove(entity);//削除
+        boolean result = entityList.remove(entity);//削除
+        if (result) {
+            entity.onRemove();
+        }
+        return result;
     }
 
     @Override

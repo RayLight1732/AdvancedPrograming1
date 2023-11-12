@@ -1,6 +1,5 @@
 package com.jp.daichi.ex5.enemy;
 
-import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.RPolygonObject;
 import com.jp.daichi.ex4.RotationalObject;
 import com.jp.daichi.ex4.Vec2d;
@@ -11,15 +10,15 @@ import com.jp.daichi.ex5.particles.Explosion;
 
 import java.awt.*;
 
-public class Enemy extends ALivingEntity {
+public abstract class Enemy extends ALivingEntity {
     private double damageCoolTime = 0;
     private final Color original = displayEntity.getColor();
 
-    public Enemy(Game game,double hp,double size,RotationalObject displayEntity) {
+    public Enemy(Game game, double size, double hp, RotationalObject displayEntity) {
         super(game,hp,size,displayEntity);
     }
-    public Enemy(Game game,double x,double y, double hp, double size) {
-        this(game,hp,size,new RPolygonObject(x,y,size,6,0,Math.PI,new Vec2d(),Color.BLUE));
+    public Enemy(Game game, double x, double y, double size, double hp) {
+        this(game, size, hp, new RPolygonObject(x,y,size,6,0,Math.PI,new Vec2d(),Color.BLUE));
     }
 
 
@@ -68,10 +67,8 @@ public class Enemy extends ALivingEntity {
         game.addParticle(new Explosion(getX(),getY(),size));
         double x = Math.random()*game.getWidth();
         double y = Math.random()*game.getHeight();
-        game.addEntity(createNewEnemy(game,x,y,getMaxHP(),size));
+        game.addEntity(createNewEnemy(game,x,y, size, getMaxHP()));
     }
 
-    protected Enemy createNewEnemy(Game game,double x,double y,double hp,double size) {
-        return new Enemy(game,x,y,hp,size);
-    }
+    protected abstract Enemy createNewEnemy(Game game, double x, double y, double size, double hp);
 }

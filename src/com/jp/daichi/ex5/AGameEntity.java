@@ -118,4 +118,9 @@ public abstract class AGameEntity implements GameEntity {
     public Game getGame() {
         return game;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

@@ -16,7 +16,7 @@ public class ThickBeam extends Bullet {
         super(game, holder,length,width,0,0,new Vec2d(), damage);
         this.positionConverter = positionConverter;
         this.rotationConverter = rotationConverter;
-        Vec2d pos = positionConverter.convert(new Vec2d(holder.getX(),holder.getY()));
+        Vec2d pos = positionConverter.convert(holder.getX(),holder.getY());
         setX(pos.x);
         setY(pos.y);
         setRotation(rotationConverter.convert(holder.getRotation()));
@@ -25,7 +25,7 @@ public class ThickBeam extends Bullet {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-        Vec2d pos = positionConverter.convert(new Vec2d(getHolder().getX(),getHolder().getY()));
+        Vec2d pos = positionConverter.convert(getHolder().getX(),getHolder().getY());
         setX(pos.x);
         setY(pos.y);
         setRotation(rotationConverter.convert(getHolder().getRotation()));

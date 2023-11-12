@@ -26,7 +26,7 @@ public class Charging extends SlaveParticle {
      * @param color 描画色
      */
     public Charging(GameEntity entity,double radius,double expansion,Color color) {
-        this(entity,radius,expansion, PositionConverter.getEmptyInstance(), RotationConverter.getEmptyInstance(),color);
+        this(entity,radius,expansion, PositionConverter.getEmptyInstance(), color);
     }
 
     /**
@@ -35,11 +35,10 @@ public class Charging extends SlaveParticle {
      * @param radius 半径
      * @param expansion 拡大する時間
      * @param positionConverter 位置を変換するオブジェクト
-     * @param rotationConverter 回転角を変換するオブジェクト
      * @param color 描画色
      */
-    public Charging(GameEntity entity,double radius,double expansion, PositionConverter positionConverter, RotationConverter rotationConverter,Color color) {
-        super(entity, positionConverter, rotationConverter);
+    public Charging(GameEntity entity,double radius,double expansion, PositionConverter positionConverter,Color color) {
+        super(entity, positionConverter, RotationConverter.getEmptyInstance());
         this.originalRadius = radius;
         this.expansion = expansion;
         this.color = color;

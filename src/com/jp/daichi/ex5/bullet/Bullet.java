@@ -20,7 +20,6 @@ public class Bullet extends AGameEntity {
         path.closePath();
         rotationalObject = new PathObject(x,y,0,0,vec,path, Color.CYAN);
         rotationalObject.setRotation(Utils.getRotation(vec));
-        System.out.println(rotationalObject.getRotation());
         //rotationalObject.setOutLineColor(Color.BLACK);
         return rotationalObject;
     }
@@ -33,6 +32,12 @@ public class Bullet extends AGameEntity {
 
     public Bullet(Game game, GameEntity holder, double length,double width, double x, double y, Vec2d vec, double damage) {
         super(game,length,getBulletShape(length,width,x,y,vec));
+        this.holder = holder;
+        this.damage = damage;
+    }
+
+    public Bullet(Game game,GameEntity holder,double damage,double size,RotationalObject shape) {
+        super(game,size,shape);
         this.holder = holder;
         this.damage = damage;
     }
@@ -73,5 +78,16 @@ public class Bullet extends AGameEntity {
 
     public void setColor(Color color) {
         displayEntity.setColor(color);
+    }
+
+    @Override
+    public void setRotation(double rotation) {
+        super.setRotation(rotation);
+        double length = getVector().getLength();
+        if (length > 0) {
+            Vec2d vec = Utils.getDirectionVector(this);
+            vec.multiple(length);
+            setVector(vec);
+        }
     }
 }

@@ -56,15 +56,16 @@ public class ThickBeamTurret extends Enemy {
 
     /**
      * 太いビームを放つ敵
-     * @param game ゲーム
+     *
+     * @param game   ゲーム
      * @param target ターゲット(自動で追尾する)
-     * @param x x座標
-     * @param y y座標
-     * @param hp hp
-     * @param size 大きさ
+     * @param x      x座標
+     * @param y      y座標
+     * @param size   大きさ
+     * @param hp     hp
      */
-    public ThickBeamTurret(Game game, GameEntity target, double x, double y, double hp, double size) {
-        super(game,hp, size,createShape(x,y,size));
+    public ThickBeamTurret(Game game, GameEntity target, double x, double y, double size, double hp) {
+        super(game, size, hp, createShape(x,y,size));
         this.target = target;
     }
 
@@ -78,7 +79,7 @@ public class ThickBeamTurret extends Enemy {
      * @param size 大きさ
      */
     public ThickBeamTurret(Game game, double x, double y, double hp, double size) {
-        this(game,null,x,y,hp,size);
+        this(game,null,x,y, size, hp);
     }
 
     @Override
@@ -99,18 +100,17 @@ public class ThickBeamTurret extends Enemy {
     }
 
     @Override
-    public void setVisible(boolean isVisible) {
-        super.setVisible(isVisible);
+    protected Enemy createNewEnemy(Game game, double x, double y, double size, double hp) {
+        return new ThickBeamTurret(game,target, x, y, size, hp);
+    }
+
+    @Override
+    public void onRemove() {
         if (charging != null) {
             charging.end(true);
         }
         if (bullet != null) {
             game.removeEntity(bullet);
         }
-    }
-
-    @Override
-    protected Enemy createNewEnemy(Game game, double x, double y, double hp, double size) {
-        return new ThickBeamTurret(game,target, x, y, hp, size);
     }
 }

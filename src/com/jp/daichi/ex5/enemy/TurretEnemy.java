@@ -22,8 +22,8 @@ public class TurretEnemy extends Enemy {
     private LivingEntity target;
 
 
-    public TurretEnemy(Game game, double x, double y, double hp,double size, LivingEntity target) {
-        super(game,x, y,hp, size);
+    public TurretEnemy(Game game, double x, double y, double size, double hp, LivingEntity target) {
+        super(game,x, y, size, hp);
         this.target = target;
     }
 
@@ -66,7 +66,7 @@ public class TurretEnemy extends Enemy {
     }
 
     @Override
-    protected Enemy createNewEnemy(Game game, double x, double y, double hp, double size) {
-        return new TurretEnemy(game, x, y, hp, size,target);
+    protected Enemy createNewEnemy(Game game, double x, double y, double size, double hp) {
+        return new TurretEnemy(game, x, y, size, hp, target);
     }
 }

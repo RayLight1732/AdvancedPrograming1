@@ -48,4 +48,6 @@ public interface GameEntity {
     void setVisible(boolean isVisible);
 
     Game getGame();
+
+    void onRemove();
 }

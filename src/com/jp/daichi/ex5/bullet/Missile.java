@@ -9,9 +9,9 @@ import com.jp.daichi.ex5.particles.Explosion;
 
 public class Missile extends Bullet {
 
+    private static final double range = 300;
     private double life;
-    private double rotateSpeed;
-    private double range = 300;
+    private final double rotateSpeed;
     public Missile(Game game, GameEntity holder, double size, double life, double x, double y, Vec2d vec, double rotateSpeed, double damage) {
         super(game, holder, size, x, y, vec, damage);
         this.rotateSpeed = rotateSpeed;
@@ -35,25 +35,9 @@ public class Missile extends Bullet {
         if (target == null || Utils.getSqDistance(centerX,centerY,target.getX(),target.getY()) > range*range) {
             return;
         }
-        Vec2d direction = new Vec2d(target.getX()-getX(),target.getY()-getY());//マウスポインタへの方向ベクトル
+        Vec2d direction = new Vec2d(target.getX()-getX(),target.getY()-getY());
         if (direction.getLength() > 0) {//長さが0以上の時
-            double angle = Utils.getRotation(direction);
-            double delta = angle - getRotation()%(Math.PI*2);//現在の角度との差
-            delta %= 2*Math.PI;//0~2*PIに正規化
-            //deltaの絶対値をなるべく小さくする
-            if (delta > Math.PI) {//180以上であれば
-                delta -= 2*Math.PI;//マイナスで表す
-            } else if (delta < -Math.PI) {//-180以下であれば
-                delta += 2*Math.PI;//プラスで表す
-            }
-            if (Math.abs(delta) > Utils.rotateSpeed*deltaTime) {//deltaがlimitよりも大きければ
-                delta = Math.signum(delta)*rotateSpeed*deltaTime;//limitに制限
-            }
-            setRotation(getRotation()+delta);//角度更新
-            double length = getVector().getLength();
-            Vec2d vec = Utils.getDirectionVector(this);
-            vec.multiple(length);
-            setVector(vec);
+            setRotation(Utils.getRotation(direction,getRotation(),rotateSpeed*deltaTime));
         }
     }
 }

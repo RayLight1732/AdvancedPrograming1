@@ -18,9 +18,10 @@ public class Vec2d {
         this(0,0);
     }
 
-    public void multiple(double k) {
+    public Vec2d multiple(double k) {
         x *= k;
         y *= k;
+        return this;
     }
 
     public boolean normalize() {

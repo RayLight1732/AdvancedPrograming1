@@ -1,7 +1,10 @@
 package com.jp.daichi.ex5;
 
+import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.enemy.Enemy;
+import com.jp.daichi.ex5.enemy.HomingExplosionTurret;
 import com.jp.daichi.ex5.enemy.ThickBeamTurret;
+import com.jp.daichi.ex5.utils.Utils;
 
 import javax.swing.*;
 
@@ -19,8 +22,12 @@ public class MainFrame{
         frame.add(display);//パネル追加
         keyBind = new KeyBind(display);
         Player player = new Player(game,300,300,30);
-        //Enemy enemy = new TurretEnemy(game,500,300,5,30,player);
-        Enemy enemy = new ThickBeamTurret(game,player,500,300,5,30);
+        //Enemy enemy = new TurretEnemy(game,500,300,30,5,player);
+        //Enemy enemy = new ThickBeamTurret(game,player,500,300, 30, 5);
+        Enemy enemy = new HomingExplosionTurret(game,500,300,30,5,player);
+        enemy.setVector(new Vec2d(Utils.playerSpeed*0.1,0));
+        enemy.setRotation(Math.PI);
+
         game.addEntity(player);
         game.addEntity(enemy);
         frame.setVisible(true);//表示
