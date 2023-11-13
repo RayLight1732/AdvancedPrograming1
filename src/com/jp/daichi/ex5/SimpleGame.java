@@ -1,17 +1,12 @@
 package com.jp.daichi.ex5;
 
 import com.jp.daichi.ex5.particles.Particle;
+import com.jp.daichi.ex5.stage.Stage;
+import com.jp.daichi.ex5.stage.StageFlow;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SimpleGame implements Game {
@@ -19,6 +14,8 @@ public class SimpleGame implements Game {
     private final List<GameEntity> entityList = new ArrayList<>();//登録されているエンティティのリスト
     private List<Particle> particles = new ArrayList<>();//登録されているパーティクルのリスト
     private GameState state;
+    private StageFlow flow;
+    private Stage stage;
     @Override
     public List<GameEntity> getEntities() {
         return new ArrayList<>(entityList);//コピーして返却
@@ -28,7 +25,7 @@ public class SimpleGame implements Game {
     public boolean removeEntity(GameEntity entity) {
         boolean result = entityList.remove(entity);//削除
         if (result) {
-            entity.onRemove();
+            entity.onRemoved();
         }
         return result;
     }
@@ -45,6 +42,19 @@ public class SimpleGame implements Game {
 
     @Override
     public void tick(double deltaTime) {
+
+        if (flow != null) {
+            if (stage == null) {
+                stage = flow.next();
+                if (stage != null) {
+                    stage.startStage(this);
+                }
+            }
+            if (stage != null) {
+                stage.tick(deltaTime);
+            }
+        }
+
         state = GameState.CollisionTick;//コリジョンティック開始
         List<GameEntity> entities = getEntities();//登録されているオブジェクトのリスト
         for (GameEntity e : entities) {
@@ -115,5 +125,8 @@ public class SimpleGame implements Game {
         getParticles().forEach(p->p.draw(g));
     }
 
-
+    @Override
+    public void setStageFlow(StageFlow stageFlow) {
+        this.flow = stageFlow;
+    }
 }

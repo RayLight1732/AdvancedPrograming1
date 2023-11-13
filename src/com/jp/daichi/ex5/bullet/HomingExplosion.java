@@ -55,9 +55,15 @@ public class HomingExplosion extends Bullet {
     }
 
     @Override
-    public void onRemove() {
+    public void onRemoved() {
         if (charging != null) {
             charging.end(true);
         }
+    }
+
+    @Override
+    public void collideWith(GameEntity entity) {
+        super.collideWith(entity);
+        game.addParticle(new Explosion(getX(),getY(),size*1.5));
     }
 }

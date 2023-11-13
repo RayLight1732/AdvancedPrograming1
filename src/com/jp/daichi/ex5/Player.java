@@ -34,7 +34,7 @@ public class Player extends ALivingEntity {
 
     @Override
     public boolean doCollision(GameEntity entity) {
-        return false;
+        return true;
     }
 
     @Override
@@ -74,13 +74,13 @@ public class Player extends ALivingEntity {
         if (forceRotate) {
             Vec2d direction = new Vec2d(rotateTargetX-getX(),rotateTargetY-getY());//向かうべきベクトル
             if (direction.getLength() > 0) {//長さが0以上の時
-                setRotation(Utils.getRotation(direction,getRotation(),Utils.rotateSpeed*deltaTime));//角度更新
+                setRotation(Utils.getRotation(direction,getRotation(),Utils.rotatetionSpeed *deltaTime));//角度更新
             }
         } else {
             if (MainFrame.keyBind.isPressed(KeyEvent.VK_A) && !MainFrame.keyBind.isPressed(KeyEvent.VK_D)) {//wキーが押されて、sキーが押されていないとき
-                setRotation(getRotation() - deltaTime * Utils.rotateSpeed);
+                setRotation(getRotation() - deltaTime * Utils.rotatetionSpeed);
             } else if (!MainFrame.keyBind.isPressed(KeyEvent.VK_A) && MainFrame.keyBind.isPressed(KeyEvent.VK_D)) {//sキーが押されて、wキーが押されていないとき
-                setRotation(getRotation() + deltaTime * Utils.rotateSpeed);
+                setRotation(getRotation() + deltaTime * Utils.rotatetionSpeed);
             }
         }
 
@@ -109,7 +109,7 @@ public class Player extends ALivingEntity {
                 double rotation = getRotation()+(1-2*(i%2))*Math.toRadians(10+(int) (i/2)*10);//(1-2*(i%2))　偶数であれば1,奇数であれば-1
                 Vec2d missileDirection = Utils.getDirectionVector(rotation);
                 missileDirection.multiple(Utils.playerBulletSpeed);
-                game.addEntity(new Missile(game,this,30,2.5,getX(),getY(),missileDirection,Utils.rotateSpeed*1.5,0.5));
+                game.addEntity(new Missile(game,this,30,2.5,getX(),getY(),missileDirection,Utils.rotatetionSpeed *1.5,5));
             }
 
             //game.addEntity(bullet);
@@ -125,7 +125,6 @@ public class Player extends ALivingEntity {
     @Override
     public void kill() {
         super.kill();
-        System.out.println("Killed");
     }
 
     public boolean canShootBullet() {

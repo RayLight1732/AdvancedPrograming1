@@ -120,7 +120,7 @@ public abstract class AGameEntity implements GameEntity {
     }
 
     @Override
-    public void onRemove() {
+    public void onRemoved() {
 
     }
 }

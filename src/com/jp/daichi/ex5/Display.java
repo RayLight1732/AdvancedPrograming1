@@ -3,6 +3,7 @@ package com.jp.daichi.ex5;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
@@ -14,28 +15,35 @@ import java.awt.image.WritableRaster;
 public class Display extends JPanel {
 
     private final Game game;//描画するゲーム
+    private double ratio = 0;
     public Display(Game game) {
         this.game = game;
         setDoubleBuffered(true);//ダブルバッファリング有効化
     }
 
+    public void setRatio(double ratio) {
+        this.ratio = ratio;
+    }
+
+    private long lastTime;
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        double widthRatio = (double) getWidth()/game.getWidth();
-        double heightRatio = (double) getHeight()/game.getHeight();
-        double ratio = Math.min(widthRatio,heightRatio);
-        double xOffset = (getWidth()-game.getWidth()*ratio)/2;
-        double yOffset = (getHeight()-game.getHeight()*ratio)/2;
-        AffineTransform transform = AffineTransform.getTranslateInstance(xOffset,yOffset);
-        transform.scale(ratio,ratio);
+        long current = System.currentTimeMillis();
+        System.out.println(current-lastTime);
+        lastTime = current;
+
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(0,0, game.getWidth(), game.getHeight());
+
         if (g instanceof Graphics2D g2d) {
             //アンチエイリアシング有効化
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+            AffineTransform transform = g2d.getTransform();
+            transform.scale(ratio,ratio);
             g2d.setTransform(transform);
-            g2d.setColor(Color.DARK_GRAY);
-            g2d.fillRect(0,0, game.getWidth(), game.getHeight());
             game.drawEntity(g2d);
+
 
             BufferedImage bI = new BufferedImage(game.getWidth(),game.getHeight(),BufferedImage.TYPE_INT_ARGB);
             Graphics2D imageG = bI.createGraphics();
@@ -47,11 +55,6 @@ public class Display extends JPanel {
             g2d.drawImage(bI,0,0,null);
             imageG.dispose();
 
-            g2d.setColor(Color.BLACK);
-            g2d.fillRect(0,0,(int)xOffset, getHeight());
-            g2d.fillRect(getWidth()-(int)xOffset,0,(int)xOffset, getHeight());
-            g2d.fillRect(0,0,getWidth(),(int)yOffset);
-            g2d.fillRect(0,getHeight()-(int)yOffset, getWidth(), (int)yOffset);
         }
     }
 

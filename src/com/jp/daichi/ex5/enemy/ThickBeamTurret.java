@@ -3,6 +3,7 @@ package com.jp.daichi.ex5.enemy;
 import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.GameEntity;
+import com.jp.daichi.ex5.LivingEntity;
 import com.jp.daichi.ex5.bullet.Bullet;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.bullet.ThickBeam;
@@ -14,7 +15,7 @@ import com.jp.daichi.ex5.utils.Utils;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
-public class ThickBeamTurret extends Enemy {
+public class ThickBeamTurret extends TurretEnemy {
 
     private static double getOutLineThick(double size) {
         if (size < 20) {
@@ -46,7 +47,6 @@ public class ThickBeamTurret extends Enemy {
     private static final Color beamColor = Color.ORANGE;
     private static final double rotationLimit = Math.toRadians(20);
 
-    private final GameEntity target;
     private double time = 0;
     private boolean spawnChargeParticle = false;
     private Charging charging;
@@ -64,9 +64,8 @@ public class ThickBeamTurret extends Enemy {
      * @param size   大きさ
      * @param hp     hp
      */
-    public ThickBeamTurret(Game game, GameEntity target, double x, double y, double size, double hp) {
-        super(game, size, hp, createShape(x,y,size));
-        this.target = target;
+    public ThickBeamTurret(Game game, LivingEntity target, double x, double y, double size, double hp) {
+        super(game, createShape(x,y,size),size, hp,target);
     }
 
     /**
@@ -85,7 +84,6 @@ public class ThickBeamTurret extends Enemy {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-        setRotation(Utils.getRotation(new Vec2d(target.getX()-getX(),target.getY()-getY()),getRotation(),rotationLimit*deltaTime));
         time += deltaTime;
         if (!spawnChargeParticle) {
             charging = new Charging(this,size-getOutLineThick(size),2, beamColor);
@@ -100,17 +98,17 @@ public class ThickBeamTurret extends Enemy {
     }
 
     @Override
-    protected Enemy createNewEnemy(Game game, double x, double y, double size, double hp) {
-        return new ThickBeamTurret(game,target, x, y, size, hp);
-    }
-
-    @Override
-    public void onRemove() {
+    public void onRemoved() {
         if (charging != null) {
             charging.end(true);
         }
         if (bullet != null) {
             game.removeEntity(bullet);
         }
+    }
+
+    @Override
+    public double getRotationLimit() {
+        return rotationLimit;
     }
 }

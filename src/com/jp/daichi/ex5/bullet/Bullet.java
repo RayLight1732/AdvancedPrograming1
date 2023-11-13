@@ -53,7 +53,7 @@ public class Bullet extends AGameEntity {
 
     @Override
     public boolean doCollision(GameEntity entity) {
-        return entity != holder && !(entity instanceof Bullet);//ホルダー,弾以外とは衝突判定
+        return entity != holder && !(entity instanceof Bullet) && holder.doCollision(entity);//ホルダー,弾以外とは衝突判定をし、ホルダーが衝突しないものとは衝突しない
     }
 
     @Override

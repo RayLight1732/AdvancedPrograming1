@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.util.List;
 
 public class UpdateThreadRunnable2 implements Runnable {
+    private static final double tickRate = 1/20.0;
 
     private final Game game;
     private final Display panel;
@@ -29,12 +30,13 @@ public class UpdateThreadRunnable2 implements Runnable {
         while (true) {
             long current = System.currentTimeMillis();//現在の時間
             double deltaTime = (current - lastTime) / 1000.0;//ミリ秒->秒に変換
-            game.tick(deltaTime);//tick処理
+            if (deltaTime>tickRate) {
+                game.tick(deltaTime);//tick処理
+                lastTime = current;//時間更新
+            }
             SwingUtilities.invokeLater(updateSwing);//更新
             try {
-                Thread.sleep(Math.max(1000 / 60 - (current - lastTime), 0));//待機 0以下にはならないように
-                lastTime = current;//時間更新
-
+                Thread.sleep(1);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

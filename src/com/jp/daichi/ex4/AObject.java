@@ -130,6 +130,13 @@ public abstract class AObject {
 
     protected double x;//x座標
     protected double y;//y座標
+    //描画用変数
+    private double previousX;
+    private double previousY;
+    private double nextX;
+    private double nextY;
+    private double lastTickTime;
+    private double lastTickDelta;
 
     protected Vec2d vector;//ベクトル
     protected Vec2d preVec;//更新用
@@ -251,7 +258,12 @@ public abstract class AObject {
      * 描画用メソッド
      * @param g グラフィックオブジェクト
      */
-    public void draw(Graphics g) {
+    public final void draw(Graphics g) {
+        double deltaTime = System.currentTimeMillis()/1000.0-lastTickTime;
+        this.draw(g,previousX+(nextX-previousX)*deltaTime/lastTickDelta,previousY+(nextY-previousY)*deltaTime/lastTickDelta);
+    }
+
+    protected void draw(Graphics g,double x,double y) {
         if (g instanceof Graphics2D) {
             ((Graphics2D)g).fill(getArea(getX(),getY()));//図形描画
         }
@@ -286,8 +298,14 @@ public abstract class AObject {
      */
     public void tick(double deltaTime) {
         //マークした座標に更新
+        previousX = x;
+        previousY = y;
         x = preX;
         y = preY;
+        nextX = x;
+        nextY = y;
+        lastTickTime = System.currentTimeMillis()/1000.0;
+        lastTickDelta = deltaTime;
         setVector(preVec);
         area = getArea(getX(),getY());
     }

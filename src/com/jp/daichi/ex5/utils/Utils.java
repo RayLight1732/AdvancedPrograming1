@@ -5,12 +5,13 @@ import com.jp.daichi.ex5.GameEntity;
 
 public class Utils {
 
+    public static final double tickParSecond = 1/20.0;
     public static final double playerBulletSpeed = 500;
     public static final double enemyBulletSpeed = 300;
     public static final double playerSpeed = 500;
     public static final double playerSpeedStep = 250;
 
-    public static final double rotateSpeed = Math.toRadians(180);//180度をラジアンに変換
+    public static final double rotatetionSpeed = Math.toRadians(180);//180度をラジアンに変換
 
     public static Vec2d getDirectionVector(GameEntity entity) {
         return getDirectionVector(entity.getRotation());

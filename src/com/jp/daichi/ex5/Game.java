@@ -1,6 +1,8 @@
 package com.jp.daichi.ex5;
 
 import com.jp.daichi.ex5.particles.Particle;
+import com.jp.daichi.ex5.stage.Stage;
+import com.jp.daichi.ex5.stage.StageFlow;
 
 import java.awt.*;
 import java.util.List;
@@ -64,4 +66,6 @@ public interface Game {
     void drawEntity(Graphics2D g);
 
     void drawParticle(Graphics2D g);
+
+    void setStageFlow(StageFlow stageFlow);
 }

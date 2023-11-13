@@ -65,10 +65,5 @@ public abstract class Enemy extends ALivingEntity {
         Game game = getGame();
         game.removeEntity(this);
         game.addParticle(new Explosion(getX(),getY(),size));
-        double x = Math.random()*game.getWidth();
-        double y = Math.random()*game.getHeight();
-        game.addEntity(createNewEnemy(game,x,y, size, getMaxHP()));
     }
-
-    protected abstract Enemy createNewEnemy(Game game, double x, double y, double size, double hp);
 }
