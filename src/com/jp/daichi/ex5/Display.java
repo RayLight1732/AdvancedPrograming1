@@ -30,7 +30,7 @@ public class Display extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         long current = System.currentTimeMillis();
-        System.out.println(current-lastTime);
+        //System.out.println(current-lastTime);
         lastTime = current;
 
         g.setColor(Color.DARK_GRAY);

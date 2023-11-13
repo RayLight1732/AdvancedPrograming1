@@ -24,9 +24,9 @@ public class PathObject extends RotationalObject {
 
 
     @Override
-    protected Area getArea(double x, double y) {
+    protected Area getArea(double x, double y,double rotation) {
         AffineTransform transform = AffineTransform.getTranslateInstance(x,y);//移動して
-        transform.rotate(getRotation());//回転
+        transform.rotate(rotation);//回転
         path = (Path2D) original.clone();
         path.transform(transform);
         return new Area(path);

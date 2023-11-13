@@ -4,16 +4,14 @@ import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.GameEntity;
 import com.jp.daichi.ex5.utils.PositionConverter;
 import com.jp.daichi.ex5.utils.RotationConverter;
-import com.jp.daichi.ex5.utils.Utils;
 
 import java.awt.*;
 
-public class Charging extends SlaveParticle {
+public class Charging extends SmoothRoundSlaveParticle {
     private final double expansion;
 
     private boolean end = false;
     private final double originalRadius;
-    private double radius = 0;
     private final Color color;
     private double time = 0;
 
@@ -48,29 +46,30 @@ public class Charging extends SlaveParticle {
 
     @Override
     public void tick(double deltaTime) {
+        super.tick(deltaTime);
         time += deltaTime;
         if (time-lastSpawnTime > 0.1) {
             lastSpawnTime = time;
             double rotation = Math.random()*Math.PI*2;//0~2PIまでの乱数
             double radius = Math.random()*originalRadius/2;//最大半径の1/2までのランダムな半径
-            double posRadius = Math.random()*this.radius*0.3+this.radius*1.2;//1.2radius~1.5*radiusまでの乱数
-            Vec2d pos = getPosition();
-            master.getGame().addParticle(new Child(new Vec2d(pos.x+posRadius*Math.cos(rotation),pos.y+posRadius*Math.sin(rotation)),radius));
+            double posRadius = Math.random()*this.getRadius()*0.3+this.getRadius()*1.2;//1.2radius~1.5*radiusまでの乱数
+
+            getMaster().getGame().addParticle(new Child(new Vec2d(getX()+posRadius*Math.cos(rotation),getY()+posRadius*Math.sin(rotation)),radius));
         }
         if (time < expansion) {
-            radius = originalRadius*time/expansion;
-        } else {
-            radius = originalRadius+(Math.random()-0.5)*originalRadius*0.05;//半径の1/20で振動
+            setRadius(originalRadius*time/expansion);
         }
-
     }
 
     @Override
-    public void draw(Graphics2D g) {
-        Vec2d position = getPosition();
+    protected void draw(Graphics2D g, double x, double y, double radius, double step) {
         g.setColor(color);
-        g.fillOval((int)Math.round(position.x-radius),(int)Math.round(position.y-radius),(int)Math.round(radius*2),(int)Math.round(radius*2));
+        if (time >= expansion) {
+            radius = originalRadius+(Math.random()-0.5)*originalRadius*0.05;//半径の1/20で振動
+        }
+        g.fillOval((int)Math.round(x-radius),(int)Math.round(y-radius),(int)Math.round(radius*2),(int)Math.round(radius*2));
     }
+
 
     @Override
     public boolean isEndDrawing() {
@@ -81,27 +80,28 @@ public class Charging extends SlaveParticle {
         this.end = end;
     }
 
-    private class Child implements Particle {
+    private class Child extends SmoothParticle {
 
         private double time = 0;
-        private final Vec2d position;
         private final double radius;
         private boolean end = false;
         private Child(Vec2d position,double radius) {
-            this.position = position;
+            setX(position.x);
+            setY(position.y);
             this.radius = radius;
         }
 
         @Override
         public void tick(double deltaTime) {
+            //TODO position is wrong
+            super.tick(deltaTime);
             this.time += deltaTime;
             if (time < 1) {
-                Vec2d masterPos = getPosition();
-                Vec2d vec = new Vec2d(masterPos.x - position.x, masterPos.y - position.y);
+                Vec2d vec = new Vec2d(Charging.this.getX() - getX(), Charging.this.getY() - getY());
                 if (vec.normalize()) {
                     vec.multiple(5 * originalRadius * deltaTime);
-                    position.x += vec.x;
-                    position.y += vec.y;
+                    setX(getX()+ vec.x);
+                    setY(getY()+ vec.y);
                 }
             } else {
                 end = true;
@@ -109,9 +109,9 @@ public class Charging extends SlaveParticle {
         }
 
         @Override
-        public void draw(Graphics2D g) {
+        protected void draw(Graphics2D g, double x, double y, double step) {
             g.setColor(color);
-            g.fillOval((int)Math.round(position.x-radius),(int)Math.round(position.y-radius),(int)Math.round(radius*2),(int)Math.round(radius*2));
+            g.fillOval((int)Math.round(x-radius),(int)Math.round(x-radius),(int)Math.round(radius*2),(int)Math.round(radius*2));
         }
 
         @Override

@@ -48,11 +48,6 @@ public abstract class TurretEnemy extends Enemy {
         }
     }
 
-    @Override
-    public void setVector(Vec2d vec) {
-        super.setVector(vec);
-    }
-
     abstract double getRotationLimit();
 
 }

@@ -42,6 +42,18 @@ public class Vec2d {
         return x*x+y*y;
     }
 
+    public Vec2d add(Vec2d vec2d) {
+        x += vec2d.x;
+        y += vec2d.y;
+        return this;
+    }
+
+    public Vec2d subtract(Vec2d vec2d) {
+        x -= vec2d.x;
+        y -= vec2d.y;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "["+x+","+y+"]";

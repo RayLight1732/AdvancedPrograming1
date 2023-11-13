@@ -25,9 +25,13 @@ public interface GameEntity {
 
     void setX(double x);
 
+    void setX(double x,boolean teleported);
+
     double getY();
 
     void setY(double y);
+
+    void setY(double y,boolean teleported);
 
     void setVector(Vec2d vec);
 

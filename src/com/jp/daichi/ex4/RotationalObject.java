@@ -1,6 +1,7 @@
 package com.jp.daichi.ex4;
 
 import java.awt.*;
+import java.awt.geom.Area;
 
 /**
  * 回転するオブジェクト
@@ -11,6 +12,8 @@ public abstract class RotationalObject extends AColoredObject {
     protected double rotation;
     protected double preRotation = 0;
 
+    private double previousRotation;
+    private double nextRotation;
     public RotationalObject(double x, double y,double rotation,double rotationSpeed, Vec2d vector) {
         this(x,y,rotation,rotationSpeed,vector,null);
     }
@@ -19,6 +22,8 @@ public abstract class RotationalObject extends AColoredObject {
         super(x, y, vector,color);
         this.rotation = rotation;
         this.rotationSpeed = rotationSpeed;
+        this.nextRotation = rotation;
+        this.previousRotation = rotation;
     }
 
     @Override
@@ -29,14 +34,19 @@ public abstract class RotationalObject extends AColoredObject {
 
     @Override
     public void tick(double deltaTime) {
+        if (teleported) {
+            previousRotation = getRotation();
+        } else {
+            previousRotation = nextRotation;
+        }
         super.tick(deltaTime);
         setRotation(preRotation);
+        nextRotation = getRotation();
     }
 
     @Override
     public void collideWith(AObject object,double deltaTime,double hitX,double hitY,boolean inner) {
         super.collideWith(object,deltaTime,hitX,hitY,inner);
-
     }
 
     /**
@@ -70,4 +80,28 @@ public abstract class RotationalObject extends AColoredObject {
     public void setRotationSpeed(double rotationSpeed) {
         this.rotationSpeed = rotationSpeed;
     }
+
+    @Override
+    protected void draw(Graphics2D g,double x,double y,double step) {
+        this.draw(g,x,y,previousRotation+(nextRotation-previousRotation)*step,step);
+    }
+
+    protected void draw(Graphics2D g,double x,double y,double rotation,double step) {
+        //System.out.println(rotation);
+        g.setColor(getColor());//描画色変更
+        Area area1 = getArea(x,y,rotation);
+        g.fill(area1);
+        if (getOutLineColor() != null) {
+            g.setColor(getOutLineColor());
+            g.draw(area1);
+        }
+    }
+
+
+    @Override
+    protected Area getArea(double x, double y) {
+        return getArea(x,y,getRotation());
+    }
+
+    protected abstract Area getArea(double x, double y, double rotation);
 }

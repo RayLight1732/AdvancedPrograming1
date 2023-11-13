@@ -24,9 +24,9 @@ public class ResizableRPolygonObject extends RPolygonObject {
     }
 
     @Override
-    protected Area getArea(double x, double y) {
+    protected Area getArea(double x, double y,double rotation) {
         AffineTransform transform = AffineTransform.getTranslateInstance(x,y);//移動して
-        transform.rotate(getRotation());//回転
+        transform.rotate(rotation);//回転
         path = createRPolygon(getNPoints(),getRadius());
         path.transform(transform);
         return new Area(path);

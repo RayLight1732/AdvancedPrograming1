@@ -3,28 +3,32 @@ package com.jp.daichi.ex5.stage;
 import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.LivingEntity;
-import com.jp.daichi.ex5.enemy.BeamTurretEnemy;
 import com.jp.daichi.ex5.enemy.TurretEnemy;
 import com.jp.daichi.ex5.utils.Utils;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-public class FirstStage implements Stage {
+public class SlideSpawnStage implements Stage {
+
     private static final int margin = 10;
-    private static final double startSpeed = Utils.playerSpeed*0.3;
-    private static final double finalSpeed = Utils.playerSpeed*0.5;
-    private static final double endSlideTime = 1.5;
-    private final Set<TurretEnemy> entities = new HashSet<>();
+    private final List<TurretEnemyFactory> factories;
+    private final List<TurretEnemy> enemies = new ArrayList<>();
+    private final double startSpeed;
+    private final double finalSpeed;
+    private final double endSlideTime;
     private boolean setTarget = false;
     private double time = 0;
     private final LivingEntity target;
     private boolean ended = false;
     private boolean started = false;
 
-    public FirstStage(LivingEntity target) {
+    public SlideSpawnStage(LivingEntity target, List<TurretEnemyFactory> factories,double startSpeed,double finalSpeed,double endSlideTime) {
         this.target = target;
+        this.factories = factories;
+        this.startSpeed = startSpeed;
+        this.finalSpeed = finalSpeed;
+        this.endSlideTime = endSlideTime;
     }
     @Override
     public void startStage(Game game) {
@@ -53,22 +57,24 @@ public class FirstStage implements Stage {
             vec2d.normalize();
             vec2d.multiple(startSpeed);
 
-            var entity = new BeamTurretEnemy(game,x,y,30,5,null,vec2d);
-            game.addEntity(entity);
-            entities.add(entity);
+            TurretEnemy enemy = factories.get(i).create(game,x,y,vec2d);
+            if (enemy != null) {
+                enemies.add(enemy);
+                game.addEntity(enemy);
+            }
         }
     }
 
     @Override
     public void tick(double deltaTime) {
-        entities.removeIf(LivingEntity::isDead);
+        enemies.removeIf(TurretEnemy::isDead);
         time +=deltaTime;
-        if (entities.isEmpty()) {
+        if (enemies.isEmpty()) {
             ended = true;
         }
         if (!ended) {
             if (time < endSlideTime) {
-                for (var entity:entities) {
+                for (var entity: enemies) {
                     Vec2d vec = entity.getVector();
                     vec.normalize();
                     vec.multiple(startSpeed+(finalSpeed-startSpeed)/endSlideTime*time);
@@ -76,7 +82,7 @@ public class FirstStage implements Stage {
                 }
             } else if (!setTarget) {
                 setTarget = true;
-                for (var entity:entities) {
+                for (var entity: enemies) {
                     entity.setTarget(target);
                     entity.setVector(Utils.getDirectionVector(entity).multiple(finalSpeed));
                 }
@@ -92,5 +98,9 @@ public class FirstStage implements Stage {
     @Override
     public boolean started() {
         return started;
+    }
+
+    public static interface TurretEnemyFactory {
+        TurretEnemy create(Game game,double x,double y,Vec2d vec2d);
     }
 }

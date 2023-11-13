@@ -16,7 +16,7 @@ public class CircleObject extends RotationalObject {
     }
 
     @Override
-    protected Area getArea(double x, double y) {
+    protected Area getArea(double x, double y,double rotation) {
         Ellipse2D ellipse2D = new Ellipse2D.Double(x-radius,y-radius,radius*2,radius*2);
         return new Area(ellipse2D);
     }

@@ -45,6 +45,11 @@ public abstract class AGameEntity implements GameEntity {
     }
 
     @Override
+    public void setX(double x, boolean teleported) {
+        displayEntity.setX(x,teleported);
+    }
+
+    @Override
     public double getY() {
         return displayEntity.getY();
     }
@@ -52,6 +57,11 @@ public abstract class AGameEntity implements GameEntity {
     @Override
     public void setY(double y) {
         displayEntity.setY(y);
+    }
+
+    @Override
+    public void setY(double y, boolean teleported) {
+        displayEntity.setY(y,teleported);
     }
 
     @Override

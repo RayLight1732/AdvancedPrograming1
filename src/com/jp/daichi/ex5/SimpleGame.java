@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class SimpleGame implements Game {
 
     private final List<GameEntity> entityList = new ArrayList<>();//登録されているエンティティのリスト
-    private List<Particle> particles = new ArrayList<>();//登録されているパーティクルのリスト
+    private final List<Particle> particles = new ArrayList<>();//登録されているパーティクルのリスト
     private GameState state;
     private StageFlow flow;
     private Stage stage;
@@ -54,6 +54,9 @@ public class SimpleGame implements Game {
                 stage.tick(deltaTime);
             }
         }
+        if (stage != null && stage.isEnded()) {
+            stage = null;
+        }
 
         state = GameState.CollisionTick;//コリジョンティック開始
         List<GameEntity> entities = getEntities();//登録されているオブジェクトのリスト
@@ -88,7 +91,7 @@ public class SimpleGame implements Game {
         for (GameEntity e : entities) {
             e.tick(deltaTime);//ティック処理
         }
-        particles = particles.stream().filter(p->!p.isEndDrawing()).collect(Collectors.toList());
+        particles.removeIf(Particle::isEndDrawing);
         for (Particle particle:new ArrayList<>(particles)) {
             particle.tick(deltaTime);
         }

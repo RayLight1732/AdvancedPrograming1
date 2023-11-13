@@ -32,19 +32,16 @@ public abstract class AColoredObject extends AObject implements Colored {
     }
 
     @Override
-    protected void draw(Graphics g,double x,double y) {
-        Color old = g.getColor();//現在使用している色を保存
+    protected void draw(Graphics2D g,double x,double y,double step) {
+        //Color old = g.getColor();//現在使用している色を保存
         g.setColor(getColor());//描画色変更
-        if (g instanceof Graphics2D) {
-            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-            Area area1 = getArea(x,y);
-            ((Graphics2D)g).fill(area1);
-            if (getOutLineColor() != null) {
-                g.setColor(getOutLineColor());
-                ((Graphics2D) g).draw(area1);
-            }
+        Area area1 = getArea(x,y);
+        g.fill(area1);
+        if (getOutLineColor() != null) {
+            g.setColor(getOutLineColor());
+            g.draw(area1);
         }
-        g.setColor(old);//色をもとに戻す
+        //g.setColor(old);//色をもとに戻す
     }
 
     @Override

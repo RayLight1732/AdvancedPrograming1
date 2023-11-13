@@ -20,43 +20,42 @@ public abstract class AObject {
      * @return 衝突後のベクトル
      */
     public static Vec2d getCollidedVector(AObject origin,AObject collide,double hitX,double hitY) {
-        if (collide instanceof WallObject) {
+        if (collide instanceof WallObject w) {
             double hVx = hitX- origin.getX();
             double hVy = hitY - origin.getY();
             if (hVx*hVx+hVy*hVy < 0.001) {//速度が十分に小さいとき、停止
                 return new Vec2d(0,0);
             }
-            WallObject w = (WallObject) collide;
             double x1 = 0,y1 = 0;
             double x2 = 0,y2 = 0;
             double minSqDistance = Double.MAX_VALUE;
             int collideI = -1;
             for (int i = 0;i < 4;i++) {
                 switch (i) {
-                    case 0:
+                    case 0 -> {
                         x1 = w.getX();
                         y1 = w.getY();
                         x2 = w.getX();
-                        y2 = y1+w.getHeight();
-                        break;
-                    case 1:
+                        y2 = y1 + w.getHeight();
+                    }
+                    case 1 -> {
                         x1 = w.getX();
-                        y1 = w.getY()+w.getHeight();
-                        x2 = x1+w.getWidth();
+                        y1 = w.getY() + w.getHeight();
+                        x2 = x1 + w.getWidth();
                         y2 = y1;
-                        break;
-                    case 2:
-                        x1 = w.getX()+w.getWidth();
-                        y1 = w.getY()+w.getHeight();
+                    }
+                    case 2 -> {
+                        x1 = w.getX() + w.getWidth();
+                        y1 = w.getY() + w.getHeight();
                         x2 = x1;
                         y2 = w.getY();
-                        break;
-                    case 3:
-                        x1 = w.getX()+w.getWidth();
+                    }
+                    case 3 -> {
+                        x1 = w.getX() + w.getWidth();
                         y1 = w.getY();
                         x2 = w.getX();
                         y2 = y1;
-                        break;
+                    }
                 }
                 //内積計算
                 double dot1 = Utils.dot(hVx,hVy,x1-origin.getX(),y1-origin.getY());
@@ -103,23 +102,13 @@ public abstract class AObject {
                     }
                 }
             }
-            Vec2d result;
-            switch (collideI) {
-                case 0:
-                    result = new Vec2d(-Math.abs(origin.getVecX()),origin.getVecY());
-                    break;
-                case 1:
-                    result = new Vec2d(origin.getVecX(),Math.abs(origin.getVecY()));
-                    break;
-                case 2:
-                    result = new Vec2d(Math.abs(origin.getVecX()),origin.getVecY());
-                    break;
-                case 3:
-                    result = new Vec2d(origin.getVecX(),-Math.abs(origin.getVecY()));
-                    break;
-                default:
-                    result = origin.getVector();
-            }
+            Vec2d result = switch (collideI) {
+                case 0 -> new Vec2d(-Math.abs(origin.getVecX()), origin.getVecY());
+                case 1 -> new Vec2d(origin.getVecX(), Math.abs(origin.getVecY()));
+                case 2 -> new Vec2d(Math.abs(origin.getVecX()), origin.getVecY());
+                case 3 -> new Vec2d(origin.getVecX(), -Math.abs(origin.getVecY()));
+                default -> origin.getVector();
+            };
 
             result.multiple(origin.getRestitutionCoefficient()*collide.getRestitutionCoefficient());
             return result;
@@ -136,10 +125,11 @@ public abstract class AObject {
     private double nextX;
     private double nextY;
     private double lastTickTime;
-    private double lastTickDelta;
+    private double lastTickDelta = -1;
 
     protected Vec2d vector;//ベクトル
     protected Vec2d preVec;//更新用
+    protected boolean teleported = true;
 
     public double preX;//更新用
     public double preY;//更新用
@@ -171,7 +161,12 @@ public abstract class AObject {
      * @param x 新たなx座標
      */
     public void setX(double x) {
+        setX(x,false);
+    }
+
+    public void setX(double x,boolean teleported) {
         this.x = x;
+        this.teleported |= teleported;
     }
 
     /**
@@ -182,12 +177,19 @@ public abstract class AObject {
         return y;
     }
 
+
+
     /**
      * y座標を設定
      * @param y 新たなy座標
      */
     public void setY(double y) {
+        setY(y,false);
+    }
+
+    public void setY(double y,boolean teleported) {
         this.y = y;
+        this.teleported |= teleported;
     }
 
     /**
@@ -259,15 +261,21 @@ public abstract class AObject {
      * @param g グラフィックオブジェクト
      */
     public final void draw(Graphics g) {
+        if (lastTickDelta == -1) {
+            return;
+        }
         double deltaTime = System.currentTimeMillis()/1000.0-lastTickTime;
-        this.draw(g,previousX+(nextX-previousX)*deltaTime/lastTickDelta,previousY+(nextY-previousY)*deltaTime/lastTickDelta);
-    }
-
-    protected void draw(Graphics g,double x,double y) {
-        if (g instanceof Graphics2D) {
-            ((Graphics2D)g).fill(getArea(getX(),getY()));//図形描画
+        double step = Math.min(deltaTime/lastTickDelta,1);
+        if (g instanceof Graphics2D g2d) {
+            this.draw(g2d, previousX + (nextX - previousX) * step, previousY + (nextY - previousY) * step, step);
         }
     }
+
+
+    protected void draw(Graphics2D g,double x,double y,double step) {
+        g.fill(getArea(x, y));//図形描画
+    }
+
 
     private int collisionTickCount = 0;
 
@@ -298,8 +306,14 @@ public abstract class AObject {
      */
     public void tick(double deltaTime) {
         //マークした座標に更新
-        previousX = x;
-        previousY = y;
+        if (teleported) {
+            previousX = x;
+            previousY = y;
+            teleported = false;
+        } else {
+            previousX = nextX;
+            previousY = nextY;
+        }
         x = preX;
         y = preY;
         nextX = x;
