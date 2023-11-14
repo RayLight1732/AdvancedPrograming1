@@ -111,4 +111,8 @@ public class ThickBeamTurret extends TurretEnemy {
         return rotationLimit;
     }
 
+    @Override
+    public int getScore() {
+        return 10;
+    }
 }

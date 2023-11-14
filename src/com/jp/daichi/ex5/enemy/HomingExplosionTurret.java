@@ -70,4 +70,9 @@ public class HomingExplosionTurret extends TurretEnemy {
             charge.end(true);
         }
     }
+
+    @Override
+    public int getScore() {
+        return 5;
+    }
 }

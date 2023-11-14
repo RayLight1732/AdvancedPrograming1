@@ -54,8 +54,10 @@ public abstract class Enemy extends ALivingEntity {
         setHP(getHP()-damage);
         damageCoolTime = 1;
         if (getHP() <= 0) {
-            kill();
+            killedBy(entity);
         }
     }
+
+    public abstract int getScore();
 
 }

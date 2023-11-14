@@ -121,7 +121,7 @@ public class Player extends ALivingEntity {
     public void attackedBy(GameEntity entity, double damage) {
         setHP(getHP()-damage);
         if (getHP() <= 0) {
-            kill();
+            killedBy(entity);
         }
     }
 

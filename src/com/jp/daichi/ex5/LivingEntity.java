@@ -11,5 +11,7 @@ public interface LivingEntity extends GameEntity{
     void attackedBy(GameEntity entity, double damage);
     void kill();
 
+    void killedBy(GameEntity entity);
+
     boolean isDead();
 }

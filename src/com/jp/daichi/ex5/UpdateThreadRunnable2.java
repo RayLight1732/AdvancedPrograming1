@@ -35,6 +35,7 @@ public class UpdateThreadRunnable2 implements Runnable {
                 lastTime = current;//時間更新
             }
             SwingUtilities.invokeLater(updateSwing);//更新
+
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {

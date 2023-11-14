@@ -48,4 +48,10 @@ public abstract class ALivingEntity extends AGameEntity implements LivingEntity 
         game.removeEntity(this);
         game.addParticle(new Explosion(getX(),getY(),size));
     }
+
+    @Override
+    public void killedBy(GameEntity entity) {
+        kill();
+        game.killedBy(this,entity);
+    }
 }

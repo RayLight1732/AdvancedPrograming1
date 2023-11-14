@@ -83,4 +83,8 @@ public class BeamTurretEnemy extends TurretEnemy {
         return Utils.rotatetionSpeed;
     }
 
+    @Override
+    public int getScore() {
+        return 5;
+    }
 }

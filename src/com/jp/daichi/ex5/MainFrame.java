@@ -12,6 +12,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,10 +25,11 @@ public class MainFrame{
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();//メイン画面
-        frame.setSize(600, 600);//サイズ指定
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);//サイズ指定
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//×を押したらプログラムが終了するように
 
-        SimpleGame game = new SimpleGame();
+        SimpleGame game = new SimpleGame();//ゲームのインスタンス生成
         Display display = new Display(game);//描画用パネル
         frame.setLayout(null);
         frame.addComponentListener(new ComponentAdapter() {
@@ -41,10 +44,16 @@ public class MainFrame{
                 display.setRatio(ratio);
             }
         });
+        frame.addWindowFocusListener(new WindowAdapter() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                display.requestFocus();
+            }
+        });
         frame.add(display);//パネル追加
         frame.getContentPane().setBackground(Color.BLACK);
         keyBind = new KeyBind(display);
-        Player player = new Player(game, 300, 300, 30);
+        Player player = new Player(game, game.getWidth()/2.0,game.getHeight()/2.0, 30);
         game.setPlayer(player);
         //Stage stage = new FirstStage(player);
         List<SlideSpawnInfo> infoList = new ArrayList<>();

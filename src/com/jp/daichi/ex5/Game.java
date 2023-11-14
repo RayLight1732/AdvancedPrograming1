@@ -71,5 +71,9 @@ public interface Game {
 
     LivingEntity getPlayer();
 
+    void killedBy(GameEntity victim,GameEntity attacker);
 
+    int getScore();
+
+    void setScore(int score);
 }

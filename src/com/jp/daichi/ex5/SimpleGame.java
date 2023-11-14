@@ -1,5 +1,6 @@
 package com.jp.daichi.ex5;
 
+import com.jp.daichi.ex5.enemy.Enemy;
 import com.jp.daichi.ex5.particles.Particle;
 import com.jp.daichi.ex5.stage.Stage;
 import com.jp.daichi.ex5.stage.StageFlow;
@@ -17,6 +18,7 @@ public class SimpleGame implements Game {
     private Player player;
     private Stage stage;
     private double playerDeathTime = 0;
+    private int score;
 
     @Override
     public List<GameEntity> getEntities() {
@@ -146,5 +148,22 @@ public class SimpleGame implements Game {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    @Override
+    public void killedBy(GameEntity victim, GameEntity attacker) {
+        if (attacker instanceof Player && victim instanceof Enemy enemy) {
+            setScore(getScore()+enemy.getScore());
+        }
+    }
+
+    @Override
+    public int getScore() {
+        return score;
+    }
+
+    @Override
+    public void setScore(int score) {
+        this.score = score;
     }
 }

@@ -27,12 +27,21 @@ public class Display extends JPanel {
     }
 
     private long lastTime;
+    private long lastFrameMeasureTime;
+    private int flame = 0;
+    private int flame_tmp = 0;
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         long current = System.currentTimeMillis();
         //System.out.println(current-lastTime);
         lastTime = current;
+        if (current-lastFrameMeasureTime > 1000) {
+            flame = flame_tmp;
+            flame_tmp = 0;
+            lastFrameMeasureTime = current;
+        }
+        flame_tmp++;
 
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0,0, game.getWidth(), game.getHeight());
@@ -76,19 +85,55 @@ public class Display extends JPanel {
                 g2d.setColor(Color.WHITE);
                 Font font = new Font(g2d.getFont().getFontName(),Font.PLAIN,200);
                 g2d.setFont(font);
-                drawStringCenter(g2d,"GameOver", game.getWidth()/2,game.getHeight()/2 );
-
+                drawAlignedString(g2d,CENTER,"GameOver", game.getWidth()/2,game.getHeight()/2 );
             }
+
+            g2d.setColor(Color.WHITE);
+            Font font = new Font(g2d.getFont().getFontName(),Font.PLAIN,20);
+            g2d.setFont(font);
+            drawAlignedString(g2d,UPPER_LEFT,"fps:"+flame,0,0);
+
+            font = new Font(g2d.getFont().getFontName(),Font.PLAIN,30);
+            g2d.setFont(font);
+            drawAlignedString(g2d,UPPER_RIGHT,"Score:"+game.getScore(), game.getWidth(), 0);
         }
     }
 
-    private void drawStringCenter(Graphics2D g,String text,int x,int y) {
+    private static final int CENTER = 0;
+    private static final int UPPER_LEFT = 1;
+    private static final int UPPER_RIGHT = 2;
+    private static final int LOWER_LEFT = 3;
+    private static final int LOWER_RIGHT = 4;
+
+    private void drawAlignedString(Graphics2D g,int alignID,String text,int x,int y) {
         FontMetrics fontMetrics = g.getFontMetrics();
         int stringWidth = fontMetrics.stringWidth(text);
         int stringHeight = fontMetrics.getAscent(); // Ascent を使用することで、ベースラインより上の高さを取得
 
-        g.drawString("GameOver",x-stringWidth/2,y-stringHeight/2+fontMetrics.getAscent());
+        switch (alignID) {
+            case CENTER -> {
+                x = x-stringWidth/2;
+                y = y+stringHeight/2;
+            }
+            case UPPER_LEFT -> {
+                y = y+stringHeight;
+            }
+            case UPPER_RIGHT -> {
+                x = x-stringWidth;
+                y = y+stringHeight;
+            }
+            case LOWER_LEFT -> {
+                y = y-fontMetrics.getDescent();
+            }
+            case LOWER_RIGHT -> {
+                x = x-stringWidth;
+                y = y-fontMetrics.getDescent();
+            }
+        }
+        g.drawString(text,x,y);
     }
+
+
 
     /**
      * 内部で使用することしか想定していないため、制約が厳しい
