@@ -1,6 +1,7 @@
 package com.jp.daichi.ex5;
 
 import com.jp.daichi.ex4.RotationalObject;
+import com.jp.daichi.ex5.particles.Explosion;
 
 public abstract class ALivingEntity extends AGameEntity implements LivingEntity {
 
@@ -43,5 +44,8 @@ public abstract class ALivingEntity extends AGameEntity implements LivingEntity 
     public void kill() {
         isDead = true;
         setVisible(false);
+        Game game = getGame();
+        game.removeEntity(this);
+        game.addParticle(new Explosion(getX(),getY(),size));
     }
 }

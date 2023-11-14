@@ -119,13 +119,12 @@ public class Player extends ALivingEntity {
 
     @Override
     public void attackedBy(GameEntity entity, double damage) {
-        //TODO
+        setHP(getHP()-damage);
+        if (getHP() <= 0) {
+            kill();
+        }
     }
 
-    @Override
-    public void kill() {
-        super.kill();
-    }
 
     public boolean canShootBullet() {
         return bulletCoolTime <= 0;

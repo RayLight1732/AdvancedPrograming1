@@ -7,7 +7,7 @@ import com.jp.daichi.ex5.utils.RotationConverter;
 
 import java.awt.*;
 
-public class Charging extends SmoothRoundSlaveParticle {
+public class Charge extends SmoothRoundSlaveParticle {
     private final double expansion;
 
     private boolean end = false;
@@ -23,7 +23,7 @@ public class Charging extends SmoothRoundSlaveParticle {
      * @param expansion 拡大する時間
      * @param color 描画色
      */
-    public Charging(GameEntity entity,double radius,double expansion,Color color) {
+    public Charge(GameEntity entity, double radius, double expansion, Color color) {
         this(entity,radius,expansion, PositionConverter.getEmptyInstance(), color);
     }
 
@@ -35,7 +35,7 @@ public class Charging extends SmoothRoundSlaveParticle {
      * @param positionConverter 位置を変換するオブジェクト
      * @param color 描画色
      */
-    public Charging(GameEntity entity,double radius,double expansion, PositionConverter positionConverter,Color color) {
+    public Charge(GameEntity entity, double radius, double expansion, PositionConverter positionConverter, Color color) {
         super(entity, positionConverter, RotationConverter.getEmptyInstance());
         this.originalRadius = radius;
         this.expansion = expansion;
@@ -53,8 +53,9 @@ public class Charging extends SmoothRoundSlaveParticle {
             double rotation = Math.random()*Math.PI*2;//0~2PIまでの乱数
             double radius = Math.random()*originalRadius/2;//最大半径の1/2までのランダムな半径
             double posRadius = Math.random()*this.getRadius()*0.3+this.getRadius()*1.2;//1.2radius~1.5*radiusまでの乱数
-
-            getMaster().getGame().addParticle(new Child(new Vec2d(getX()+posRadius*Math.cos(rotation),getY()+posRadius*Math.sin(rotation)),radius));
+            System.out.println();
+            Vec2d pos = new Vec2d(getX()+posRadius*Math.cos(rotation),getY()+posRadius*Math.sin(rotation));
+            getMaster().getGame().addParticle(new Child(pos,radius));
         }
         if (time < expansion) {
             setRadius(originalRadius*time/expansion);
@@ -93,11 +94,11 @@ public class Charging extends SmoothRoundSlaveParticle {
 
         @Override
         public void tick(double deltaTime) {
-            //TODO position is wrong
             super.tick(deltaTime);
             this.time += deltaTime;
             if (time < 1) {
-                Vec2d vec = new Vec2d(Charging.this.getX() - getX(), Charging.this.getY() - getY());
+
+                Vec2d vec = new Vec2d(Charge.this.getX() - getX(), Charge.this.getY() - getY());
                 if (vec.normalize()) {
                     vec.multiple(5 * originalRadius * deltaTime);
                     setX(getX()+ vec.x);
@@ -111,12 +112,12 @@ public class Charging extends SmoothRoundSlaveParticle {
         @Override
         protected void draw(Graphics2D g, double x, double y, double step) {
             g.setColor(color);
-            g.fillOval((int)Math.round(x-radius),(int)Math.round(x-radius),(int)Math.round(radius*2),(int)Math.round(radius*2));
+            g.fillOval((int)Math.round(x-radius),(int)Math.round(y-radius),(int)Math.round(radius*2),(int)Math.round(radius*2));
         }
 
         @Override
         public boolean isEndDrawing() {
-            return end || Charging.this.isEndDrawing();
+            return end || Charge.this.isEndDrawing();
         }
     }
 }

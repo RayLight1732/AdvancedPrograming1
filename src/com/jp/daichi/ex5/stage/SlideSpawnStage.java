@@ -6,8 +6,7 @@ import com.jp.daichi.ex5.LivingEntity;
 import com.jp.daichi.ex5.enemy.TurretEnemy;
 import com.jp.daichi.ex5.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SlideSpawnStage implements Stage {
 
@@ -18,10 +17,14 @@ public class SlideSpawnStage implements Stage {
     private final double finalSpeed;
     private final double endSlideTime;
     private boolean setTarget = false;
-    private double time = 0;
+    protected double time = 0;
     private final LivingEntity target;
     private boolean ended = false;
     private boolean started = false;
+
+    public SlideSpawnStage(LivingEntity target,SlideSpawnInfo info) {
+        this(target, Collections.nCopies(4,info.factory()),info.startSpeed(),info.finalSpeed(),info.endSlideTime());
+    }
 
     public SlideSpawnStage(LivingEntity target, List<TurretEnemyFactory> factories,double startSpeed,double finalSpeed,double endSlideTime) {
         this.target = target;
@@ -56,11 +59,12 @@ public class SlideSpawnStage implements Stage {
             Vec2d vec2d = new Vec2d(game.getWidth()/2.0-x, game.getHeight()/2.0-y);
             vec2d.normalize();
             vec2d.multiple(startSpeed);
-
-            TurretEnemy enemy = factories.get(i).create(game,x,y,vec2d);
-            if (enemy != null) {
-                enemies.add(enemy);
-                game.addEntity(enemy);
+            if (factories.get(i)!= null) {
+                TurretEnemy enemy = factories.get(i).create(game, x, y, vec2d);
+                if (enemy != null) {
+                    enemies.add(enemy);
+                    game.addEntity(enemy);
+                }
             }
         }
     }
@@ -100,7 +104,8 @@ public class SlideSpawnStage implements Stage {
         return started;
     }
 
-    public static interface TurretEnemyFactory {
+    public interface TurretEnemyFactory {
         TurretEnemy create(Game game,double x,double y,Vec2d vec2d);
     }
+
 }

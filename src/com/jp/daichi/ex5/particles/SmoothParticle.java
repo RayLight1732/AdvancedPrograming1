@@ -15,14 +15,18 @@ public abstract class SmoothParticle implements Particle {
 
     @Override
     public void tick(double deltaTime) {
-        if (lastTickDelta == -1) {
+        smooth(lastTickDelta == -1);
+        lastTickDelta = deltaTime;
+    }
+
+    protected void smooth(boolean first) {
+        if (first) {
             previousX = getX();
             previousY = getY();
         } else {
             previousX = nextX;
             previousY = nextY;
         }
-        lastTickDelta = deltaTime;
         lastTickTime = System.currentTimeMillis()/1000.0;
         nextX = getX();
         nextY = getY();

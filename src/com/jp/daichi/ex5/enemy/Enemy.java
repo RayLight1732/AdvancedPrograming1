@@ -58,12 +58,4 @@ public abstract class Enemy extends ALivingEntity {
         }
     }
 
-    @Override
-    public void kill() {
-        super.kill();
-        System.out.println("kill");
-        Game game = getGame();
-        game.removeEntity(this);
-        game.addParticle(new Explosion(getX(),getY(),size));
-    }
 }

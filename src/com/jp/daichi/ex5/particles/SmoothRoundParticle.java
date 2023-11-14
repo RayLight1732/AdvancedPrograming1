@@ -16,14 +16,14 @@ public abstract class SmoothRoundParticle extends SmoothParticle {
     }
 
     @Override
-    public void tick(double deltaTime) {
-        if (getLastTickDelta() == -1) {
+    protected void smooth(boolean first) {
+        super.smooth(first);
+        if (first) {
             previousR = radius;
         } else {
             previousR = nextR;
         }
         nextR = radius;
-        super.tick(deltaTime);
     }
 
     @Override

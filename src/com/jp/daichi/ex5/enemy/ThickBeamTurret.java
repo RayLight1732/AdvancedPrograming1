@@ -6,7 +6,7 @@ import com.jp.daichi.ex5.LivingEntity;
 import com.jp.daichi.ex5.bullet.Bullet;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.bullet.ThickBeam;
-import com.jp.daichi.ex5.particles.Charging;
+import com.jp.daichi.ex5.particles.Charge;
 import com.jp.daichi.ex5.utils.PositionConverter;
 import com.jp.daichi.ex5.utils.RotationConverter;
 
@@ -19,7 +19,7 @@ public class ThickBeamTurret extends TurretEnemy {
         if (size < 20) {
             return size*0.1;
         } else {
-            return 10;
+            return size*0.3;
         }
     }
 
@@ -43,11 +43,12 @@ public class ThickBeamTurret extends TurretEnemy {
     }
 
     private static final Color beamColor = Color.ORANGE;
-    private static final double rotationLimit = Math.toRadians(20);
+    private static final double rotationLimit = Math.toRadians(15);
+    private static final double damage = 0.1;
 
     private double time = 0;
     private boolean spawnChargeParticle = false;
-    private Charging charging;
+    private Charge charge;
 
     private Bullet bullet;
 
@@ -62,8 +63,8 @@ public class ThickBeamTurret extends TurretEnemy {
      * @param size   大きさ
      * @param hp     hp
      */
-    public ThickBeamTurret(Game game, LivingEntity target, double x, double y, double size, double hp) {
-        super(game, createShape(x,y,size),size, hp,target);
+    public ThickBeamTurret(Game game, LivingEntity target, double x, double y, double size, double hp,Vec2d direction) {
+        super(game, createShape(x,y,size),size, hp,target,direction);
     }
 
     /**
@@ -75,8 +76,8 @@ public class ThickBeamTurret extends TurretEnemy {
      * @param hp hp
      * @param size 大きさ
      */
-    public ThickBeamTurret(Game game, double x, double y, double hp, double size) {
-        this(game,null,x,y, size, hp);
+    public ThickBeamTurret(Game game, double x, double y, double hp, double size,Vec2d direction) {
+        this(game,null,x,y, size, hp,direction);
     }
 
     @Override
@@ -84,12 +85,12 @@ public class ThickBeamTurret extends TurretEnemy {
         super.tick(deltaTime);
         time += deltaTime;
         if (!spawnChargeParticle) {
-            charging = new Charging(this,size-getOutLineThick(size),2, beamColor);
-            getGame().addParticle(charging);
+            charge = new Charge(this,size-getOutLineThick(size),2, beamColor);
+            getGame().addParticle(charge);
             spawnChargeParticle = true;
         }
         if (time > 4 && bullet == null) {
-            bullet = new ThickBeam(game,this,Math.sqrt(game.getHeight()*game.getHeight()+game.getWidth()*game.getWidth()),getOutLineThick(size), PositionConverter.getEmptyInstance(), RotationConverter.getEmptyInstance(),5);
+            bullet = new ThickBeam(game,this,Math.sqrt(game.getHeight()*game.getHeight()+game.getWidth()*game.getWidth()),getOutLineThick(size), PositionConverter.getEmptyInstance(), RotationConverter.getEmptyInstance(),damage);
             bullet.setColor(beamColor);
             game.addEntity(bullet);
         }
@@ -97,8 +98,8 @@ public class ThickBeamTurret extends TurretEnemy {
 
     @Override
     public void onRemoved() {
-        if (charging != null) {
-            charging.end(true);
+        if (charge != null) {
+            charge.end(true);
         }
         if (bullet != null) {
             game.removeEntity(bullet);
@@ -109,4 +110,5 @@ public class ThickBeamTurret extends TurretEnemy {
     public double getRotationLimit() {
         return rotationLimit;
     }
+
 }

@@ -7,15 +7,17 @@ import com.jp.daichi.ex5.stage.StageFlow;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SimpleGame implements Game {
 
     private final List<GameEntity> entityList = new ArrayList<>();//登録されているエンティティのリスト
     private final List<Particle> particles = new ArrayList<>();//登録されているパーティクルのリスト
-    private GameState state;
+    private GameState state = GameState.IN_GAME;
     private StageFlow flow;
+    private Player player;
     private Stage stage;
+    private double playerDeathTime = 0;
+
     @Override
     public List<GameEntity> getEntities() {
         return new ArrayList<>(entityList);//コピーして返却
@@ -42,23 +44,28 @@ public class SimpleGame implements Game {
 
     @Override
     public void tick(double deltaTime) {
-
+        LivingEntity player = getPlayer();
+        if (player != null && player.isDead()) {
+            playerDeathTime += deltaTime;
+        }
+        if (playerDeathTime > 2) {
+            state = GameState.GAME_OVER;
+            return;
+        }
         if (flow != null) {
             if (stage == null) {
                 stage = flow.next();
-                if (stage != null) {
-                    stage.startStage(this);
-                }
             }
             if (stage != null) {
+                if (!stage.started()) {
+                    stage.startStage(this);
+                }
                 stage.tick(deltaTime);
             }
         }
         if (stage != null && stage.isEnded()) {
             stage = null;
         }
-
-        state = GameState.CollisionTick;//コリジョンティック開始
         List<GameEntity> entities = getEntities();//登録されているオブジェクトのリスト
         for (GameEntity e : entities) {
             e.collisionTick(deltaTime);//衝突前処理を行う
@@ -87,7 +94,6 @@ public class SimpleGame implements Game {
                 }
             }
         }
-        state = GameState.GameTick;//ゲームティック開始
         for (GameEntity e : entities) {
             e.tick(deltaTime);//ティック処理
         }
@@ -131,5 +137,14 @@ public class SimpleGame implements Game {
     @Override
     public void setStageFlow(StageFlow stageFlow) {
         this.flow = stageFlow;
+    }
+
+    @Override
+    public LivingEntity getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

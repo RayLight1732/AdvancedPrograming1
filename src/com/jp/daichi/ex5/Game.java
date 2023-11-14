@@ -68,4 +68,8 @@ public interface Game {
     void drawParticle(Graphics2D g);
 
     void setStageFlow(StageFlow stageFlow);
+
+    LivingEntity getPlayer();
+
+
 }

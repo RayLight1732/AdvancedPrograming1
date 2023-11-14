@@ -4,7 +4,7 @@ import com.jp.daichi.ex4.CircleObject;
 import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.GameEntity;
-import com.jp.daichi.ex5.particles.Charging;
+import com.jp.daichi.ex5.particles.Charge;
 import com.jp.daichi.ex5.particles.Explosion;
 import com.jp.daichi.ex5.utils.Utils;
 
@@ -21,15 +21,15 @@ public class HomingExplosion extends Bullet {
     private final double rotateSpeed;
     private final GameEntity target;
     private double life;
-    private final Charging charging;
+    private final Charge charge;
 
     public HomingExplosion(Game game, GameEntity holder,GameEntity target, double size, double x, double y, Vec2d vec2d, double damage,double rotateSpeed,double life,Color color) {
         super(game, holder, damage,size, createShape(x,y,vec2d,size));
         this.target = target;
         this.rotateSpeed = rotateSpeed;
         this.life = life;
-        this.charging = new Charging(this,size,0,color);
-        game.addParticle(charging);
+        this.charge = new Charge(this,size,0,color);
+        game.addParticle(charge);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class HomingExplosion extends Bullet {
         life -= deltaTime;
         if (life < 0) {
             game.removeEntity(this);
-            charging.end(true);
+            charge.end(true);
             game.addParticle(new Explosion(getX(),getY(),size*1.5));
         } else {
             Vec2d direction = new Vec2d(target.getX()-getX(),target.getY()-getY());
@@ -51,13 +51,13 @@ public class HomingExplosion extends Bullet {
     @Override
     public void setVisible(boolean isVisible) {
         super.setVisible(isVisible);
-        charging.end(isVisible);
+        charge.end(isVisible);
     }
 
     @Override
     public void onRemoved() {
-        if (charging != null) {
-            charging.end(true);
+        if (charge != null) {
+            charge.end(true);
         }
     }
 
