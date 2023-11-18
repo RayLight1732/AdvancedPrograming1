@@ -2,6 +2,7 @@ package com.jp.daichi.ex5.enemy;
 
 import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.Vec2d;
+import com.jp.daichi.ex5.GameEntity;
 import com.jp.daichi.ex5.LivingEntity;
 import com.jp.daichi.ex5.bullet.Bullet;
 import com.jp.daichi.ex5.Game;
@@ -9,6 +10,7 @@ import com.jp.daichi.ex5.bullet.ThickBeam;
 import com.jp.daichi.ex5.particles.Charge;
 import com.jp.daichi.ex5.utils.PositionConverter;
 import com.jp.daichi.ex5.utils.RotationConverter;
+import com.jp.daichi.ex5.utils.Utils;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -50,7 +52,7 @@ public class ThickBeamTurret extends TurretEnemy {
     private boolean spawnChargeParticle = false;
     private Charge charge;
 
-    private Bullet bullet;
+    private ThickBeam bullet;
 
 
     /**
@@ -63,26 +65,16 @@ public class ThickBeamTurret extends TurretEnemy {
      * @param size   大きさ
      * @param hp     hp
      */
-    public ThickBeamTurret(Game game, LivingEntity target, double x, double y, double size, double hp,Vec2d direction) {
-        super(game, createShape(x,y,size),size, hp,target,direction);
-    }
-
-    /**
-     * 太いビームを放つ敵
-     * 角度はsetRotationで変更しない限り変化しない
-     * @param game ゲーム
-     * @param x x座標
-     * @param y y座標
-     * @param hp hp
-     * @param size 大きさ
-     */
-    public ThickBeamTurret(Game game, double x, double y, double hp, double size,Vec2d direction) {
-        this(game,null,x,y, size, hp,direction);
+    public ThickBeamTurret(Game game, LivingEntity target, double x, double y, double size, double hp) {
+        super(game, createShape(x,y,size), target, size, hp);
     }
 
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    public void doTick(double deltaTime) {
+        GameEntity target = getTarget();
+        if (target != null) {
+            setRotation(Utils.getRotation(new Vec2d(getTarget().getX() - getX(), getTarget().getY() - getY()), getRotation(), rotationLimit * deltaTime));
+        }
         time += deltaTime;
         if (!spawnChargeParticle) {
             charge = new Charge(this,size-getOutLineThick(size),2, beamColor);
@@ -114,5 +106,9 @@ public class ThickBeamTurret extends TurretEnemy {
     @Override
     public int getScore() {
         return 10;
+    }
+
+    @Override
+    protected void pushedBy(GameEntity entity, double collideX, double collideY) {
     }
 }

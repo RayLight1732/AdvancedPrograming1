@@ -34,9 +34,7 @@ public interface GameEntity {
     void setY(double y,boolean teleported);
 
     void setVector(Vec2d vec);
-
     Vec2d getVector();
-
     double getRotation();
 
     void setRotation(double rotation);
@@ -54,4 +52,12 @@ public interface GameEntity {
     Game getGame();
 
     void onRemoved();
+
+    /**
+     * 対象のエンティティを攻撃できるか
+     * @param entity 対象のエンティティ
+     * @return このエンティティが対象のエンティティを攻撃できるならtrue
+     */
+    boolean canAttack(GameEntity entity);
+
 }

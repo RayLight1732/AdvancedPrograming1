@@ -7,7 +7,6 @@ public interface LivingEntity extends GameEntity{
     double getMaxHP();
 
     double setMaxHP(double maxHP);
-
     void attackedBy(GameEntity entity, double damage);
     void kill();
 

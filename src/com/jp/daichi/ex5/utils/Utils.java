@@ -9,7 +9,7 @@ public class Utils {
     public static final double playerBulletSpeed = 500;
     public static final double enemyBulletSpeed = 300;
     public static final double playerSpeed = 500;
-    public static final double playerSpeedStep = 250;
+    public static final double playerAcceleration = 250;
 
     public static final double rotatetionSpeed = Math.toRadians(180);//180度をラジアンに変換
 

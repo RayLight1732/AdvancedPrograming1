@@ -10,7 +10,7 @@ import com.jp.daichi.ex5.utils.Utils;
 
 import java.awt.*;
 
-public class HomingExplosion extends Bullet {
+public class HomingExplosion extends HomingProjectile {
 
     private static CircleObject createShape(double x, double y, Vec2d vec2d, double size) {
         CircleObject result = new CircleObject(x,y,vec2d,size);
@@ -18,15 +18,13 @@ public class HomingExplosion extends Bullet {
         return result;
     }
 
-    private final double rotateSpeed;
     private final GameEntity target;
     private double life;
     private final Charge charge;
 
     public HomingExplosion(Game game, GameEntity holder,GameEntity target, double size, double x, double y, Vec2d vec2d, double damage,double rotateSpeed,double life,Color color) {
-        super(game, holder, damage,size, createShape(x,y,vec2d,size));
+        super(game, holder, size, createShape(x,y,vec2d,size),vec2d.getLength(),rotateSpeed,100,damage);
         this.target = target;
-        this.rotateSpeed = rotateSpeed;
         this.life = life;
         this.charge = new Charge(this,size,0,color);
         game.addParticle(charge);
@@ -40,12 +38,12 @@ public class HomingExplosion extends Bullet {
             game.removeEntity(this);
             charge.end(true);
             game.addParticle(new Explosion(getX(),getY(),size*1.5));
-        } else {
-            Vec2d direction = new Vec2d(target.getX()-getX(),target.getY()-getY());
-            if (direction.getLength() > 0) {//長さが0以上の時
-                setRotation(Utils.getRotation(direction,getRotation(),rotateSpeed*deltaTime));
-            }
         }
+    }
+
+    @Override
+    public GameEntity getTarget() {
+        return target;
     }
 
     @Override

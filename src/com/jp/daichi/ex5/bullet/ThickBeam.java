@@ -7,13 +7,15 @@ import com.jp.daichi.ex5.LivingEntity;
 import com.jp.daichi.ex5.utils.PositionConverter;
 import com.jp.daichi.ex5.utils.RotationConverter;
 
-public class ThickBeam extends Bullet {
+import java.awt.*;
+
+public class ThickBeam extends Projectile {
 
     private final PositionConverter positionConverter;
     private final RotationConverter rotationConverter;
 
-    public ThickBeam(Game game, GameEntity holder, double length, double width, PositionConverter positionConverter, RotationConverter rotationConverter, double damage) {
-        super(game, holder,length,width,0,0,new Vec2d(), damage);
+    public ThickBeam(Game game, LivingEntity holder, double length, double width, PositionConverter positionConverter, RotationConverter rotationConverter, double damage) {
+        super(game, holder,length,Bullet.getBulletShape(length,width,0,0,new Vec2d(),true),damage);
         this.positionConverter = positionConverter;
         this.rotationConverter = rotationConverter;
         Vec2d pos = positionConverter.convert(holder.getX(),holder.getY());
@@ -35,4 +37,9 @@ public class ThickBeam extends Bullet {
     public void collideWith(GameEntity entity) {
         ((LivingEntity)entity).attackedBy(getHolder(),getDamage());
     }
+
+    public void setColor(Color color) {
+        displayEntity.setColor(color);
+    }
+
 }

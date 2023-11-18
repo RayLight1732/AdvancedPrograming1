@@ -9,16 +9,11 @@ import com.jp.daichi.ex5.utils.Utils;
 public abstract class TurretEnemy extends Enemy {
 
     private LivingEntity target;
-
-    public TurretEnemy(Game game, RotationalObject rotationalObject, double size, double hp, LivingEntity target) {
-        this(game,rotationalObject,size,hp,target,new Vec2d());
-    }
-
-    public TurretEnemy(Game game, RotationalObject rotationalObject, double size, double hp, LivingEntity target, Vec2d direction) {
+    private double maxSpeed = 0;
+    private double acceleration = Utils.playerAcceleration;
+    public TurretEnemy(Game game, RotationalObject rotationalObject, LivingEntity target, double size, double hp) {
         super(game, size, hp,rotationalObject);
         this.target = target;
-        setVector(direction);
-        setRotation(Utils.getRotation(direction));
     }
 
     public LivingEntity getTarget() {
@@ -30,24 +25,39 @@ public abstract class TurretEnemy extends Enemy {
     }
 
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    protected void doTick(double deltaTime) {
+        //ma'=ma-kv
+        //終端速度=maxSpeed
+        //ma=kv
+        //k=ma/maxSpeed
         if (target != null) {
-            setRotation(Utils.getRotation(new Vec2d(target.getX()-getX(),target.getY()-getY()),getRotation(),getRotationLimit()*deltaTime));
-        }
-    }
-
-    @Override
-    public void setRotation(double rotation) {
-        super.setRotation(rotation);
-        double length = getVector().getLength();
-        if (length > 0) {
-            Vec2d vec = Utils.getDirectionVector(this);
-            vec.multiple(length);
-            setVector(vec);
+            if (!impulse) {
+                setRotation(Utils.getRotation(new Vec2d(target.getX() - getX(), target.getY() - getY()), getRotation(), getRotationLimit() * deltaTime));
+                double k = acceleration/maxSpeed;
+                Vec2d a = Utils.getDirectionVector(this);//加速度
+                a.normalize();//正規化して
+                a.multiple(getAcceleration());//指定した加速度に伸ばす
+                Vec2d newA = a.subtract(getVector().multiple(k));//新しい加速度はma-kvから導く
+                setVector(getVector().add(newA.multiple(deltaTime)));
+            }
         }
     }
 
     abstract double getRotationLimit();
 
+    public void setMaxSpeed(double maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public double getAcceleration() {
+        return acceleration;
+    }
+
+    public void setAcceleration(double acceleration) {
+        this.acceleration = acceleration;
+    }
 }

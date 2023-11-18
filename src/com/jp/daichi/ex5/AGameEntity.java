@@ -9,6 +9,7 @@ import java.awt.geom.Area;
 
 public abstract class AGameEntity implements GameEntity {
 
+    private static final double dumpingRate = 1;//一秒で100%減衰
     protected final Game game;//対象のゲーム
     protected double size;//サイズ
     protected RotationalObject displayEntity;//描画用オブジェクト
@@ -131,6 +132,15 @@ public abstract class AGameEntity implements GameEntity {
 
     @Override
     public void onRemoved() {
+    }
 
+    @Override
+    public boolean doCollision(GameEntity entity) {
+        return true;
+    }
+
+    @Override
+    public int getCollisionRulePriority() {
+        return 0;
     }
 }

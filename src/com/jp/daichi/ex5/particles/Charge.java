@@ -53,7 +53,6 @@ public class Charge extends SmoothRoundSlaveParticle {
             double rotation = Math.random()*Math.PI*2;//0~2PIまでの乱数
             double radius = Math.random()*originalRadius/2;//最大半径の1/2までのランダムな半径
             double posRadius = Math.random()*this.getRadius()*0.3+this.getRadius()*1.2;//1.2radius~1.5*radiusまでの乱数
-            System.out.println();
             Vec2d pos = new Vec2d(getX()+posRadius*Math.cos(rotation),getY()+posRadius*Math.sin(rotation));
             getMaster().getGame().addParticle(new Child(pos,radius));
         }

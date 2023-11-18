@@ -6,7 +6,6 @@ import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.ALivingEntity;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.GameEntity;
-import com.jp.daichi.ex5.particles.Explosion;
 
 import java.awt.*;
 
@@ -21,24 +20,13 @@ public abstract class Enemy extends ALivingEntity {
         this(game, size, hp, new RPolygonObject(x,y,size,6,0,Math.PI,new Vec2d(),Color.BLUE));
     }
 
-
-    @Override
-    public boolean doCollision(GameEntity entity) {
-        return !(entity instanceof Enemy);
-    }
-
     @Override
     public int getCollisionRulePriority() {
-        return 10;
+        return 0;
     }
 
     @Override
-    public void collideWith(GameEntity entity) {
-    }
-
-    @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    protected void doTick(double deltaTime) {
         if (damageCoolTime >= 0) {
             damageCoolTime = Math.max(0, damageCoolTime -deltaTime);
             if ((int)(damageCoolTime *10)%2!=0) {
@@ -56,6 +44,11 @@ public abstract class Enemy extends ALivingEntity {
         if (getHP() <= 0) {
             killedBy(entity);
         }
+    }
+
+    @Override
+    public boolean canAttack(GameEntity entity) {
+        return !(entity instanceof Enemy);
     }
 
     public abstract int getScore();

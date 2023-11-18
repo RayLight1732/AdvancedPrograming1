@@ -206,6 +206,9 @@ public abstract class AObject {
      */
     public void setVector(Vec2d vector) {
         this.vector = vector;
+        if (getTickState()==TickState.CollisionTick) {
+            this.preVec = vector;
+        }
     }
 
     /**

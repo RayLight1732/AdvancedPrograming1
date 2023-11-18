@@ -19,6 +19,7 @@ public class SimpleGame implements Game {
     private Stage stage;
     private double playerDeathTime = 0;
     private int score;
+    private List<GameEntity> markedToRemove = new ArrayList<>();
 
     @Override
     public List<GameEntity> getEntities() {
@@ -26,12 +27,8 @@ public class SimpleGame implements Game {
     }
 
     @Override
-    public boolean removeEntity(GameEntity entity) {
-        boolean result = entityList.remove(entity);//削除
-        if (result) {
-            entity.onRemoved();
-        }
-        return result;
+    public void removeEntity(GameEntity entity) {
+        markedToRemove.add(entity);
     }
 
     @Override
@@ -102,6 +99,17 @@ public class SimpleGame implements Game {
         particles.removeIf(Particle::isEndDrawing);
         for (Particle particle:new ArrayList<>(particles)) {
             particle.tick(deltaTime);
+        }
+
+        List<GameEntity> succeeded = new ArrayList<>();//削除に成功したもの
+        for (GameEntity entity:markedToRemove) {
+            if (this.entityList.remove(entity)) {
+                succeeded.add(entity);
+            }
+        }
+        markedToRemove.clear();
+        for (GameEntity entity:succeeded) {
+            entity.onRemoved();
         }
 
     }

@@ -33,23 +33,13 @@ public class Player extends ALivingEntity {
     }
 
     @Override
-    public boolean doCollision(GameEntity entity) {
-        return true;
-    }
-
-    @Override
     public int getCollisionRulePriority() {
         return 0;
     }
 
-    @Override
-    public void collideWith(GameEntity entity) {
-
-    }
 
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    public void doTick(double deltaTime) {
         if (!canShootBullet()) {//クールタイムが終わっていないなら
             bulletCoolTime -=deltaTime;//クールタイム減少
         }
@@ -86,7 +76,7 @@ public class Player extends ALivingEntity {
 
         Vec2d vec2d = getVector();
         double vecLength = vec2d.getLength();//ベクトルの長さ取得
-        double deltaLength = Utils.playerSpeedStep*deltaTime;//一秒間にplayerSpeedStepだけ変化するとき、deltaTime秒で変化する量
+        double deltaLength = Utils.playerAcceleration *deltaTime;//一秒間にplayerSpeedStepだけ変化するとき、deltaTime秒で変化する量
         if (MainFrame.keyBind.isPressed(KeyEvent.VK_W) && !MainFrame.keyBind.isPressed(KeyEvent.VK_S)) {//wキーが押されて、sキーが押されていないとき
             vecLength = Math.min(vecLength+deltaLength,Utils.playerSpeed);//最大値設定
         } else if (!MainFrame.keyBind.isPressed(KeyEvent.VK_W) && MainFrame.keyBind.isPressed(KeyEvent.VK_S)) {//sキーが押されて、wキーが押されていないとき
@@ -108,13 +98,19 @@ public class Player extends ALivingEntity {
             for (int i = 0;i < 4;i++) {
                 double rotation = getRotation()+(1-2*(i%2))*Math.toRadians(10+(int) (i/2)*10);//(1-2*(i%2))　偶数であれば1,奇数であれば-1
                 Vec2d missileDirection = Utils.getDirectionVector(rotation);
-                missileDirection.multiple(Utils.playerBulletSpeed);
-                game.addEntity(new Missile(game,this,30,2.5,getX(),getY(),missileDirection,Utils.rotatetionSpeed *1.5,5));
+                missileDirection.multiple(Utils.playerBulletSpeed*1.2);
+                Missile missile = new Missile(game,this,30,getX(),getY(),missileDirection,Utils.playerBulletSpeed*1.5,Utils.rotatetionSpeed*1.5,500,2.5,10);
+                game.addEntity(missile);
             }
 
             //game.addEntity(bullet);
             bulletCoolTime = 1;
         }
+    }
+
+    @Override
+    public boolean canAttack(GameEntity entity) {
+        return true;
     }
 
     @Override

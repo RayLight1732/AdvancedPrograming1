@@ -10,7 +10,7 @@ import java.util.*;
 
 public class SlideSpawnStage implements Stage {
 
-    private static final int margin = 10;
+    private static final int margin = -100;
     private final List<TurretEnemyFactory> factories;
     private final List<TurretEnemy> enemies = new ArrayList<>();
     private final double startSpeed;
@@ -56,12 +56,14 @@ public class SlideSpawnStage implements Stage {
                     y = -margin;
                 }
             }
-            Vec2d vec2d = new Vec2d(game.getWidth()/2.0-x, game.getHeight()/2.0-y);
-            vec2d.normalize();
-            vec2d.multiple(startSpeed);
             if (factories.get(i)!= null) {
-                TurretEnemy enemy = factories.get(i).create(game, x, y, vec2d);
+                TurretEnemy enemy = factories.get(i).create(game, x, y);
                 if (enemy != null) {
+                    Vec2d vec2d = new Vec2d(game.getWidth()/2.0-x, game.getHeight()/2.0-y);
+                    vec2d.normalize();
+                    vec2d.multiple(startSpeed);
+                    enemy.setRotation(Utils.getRotation(vec2d));
+                    enemy.setVector(vec2d);
                     enemies.add(enemy);
                     game.addEntity(enemy);
                 }
@@ -89,6 +91,7 @@ public class SlideSpawnStage implements Stage {
                 for (var entity: enemies) {
                     entity.setTarget(target);
                     entity.setVector(Utils.getDirectionVector(entity).multiple(finalSpeed));
+                    entity.setMaxSpeed(finalSpeed);
                 }
             }
         }
@@ -105,7 +108,7 @@ public class SlideSpawnStage implements Stage {
     }
 
     public interface TurretEnemyFactory {
-        TurretEnemy create(Game game,double x,double y,Vec2d vec2d);
+        TurretEnemy create(Game game,double x,double y);
     }
 
 }

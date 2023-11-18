@@ -1,10 +1,6 @@
 package com.jp.daichi.ex5;
 
-import com.jp.daichi.ex4.Vec2d;
-import com.jp.daichi.ex5.enemy.BeamTurretEnemy;
-import com.jp.daichi.ex5.enemy.HomingExplosionTurret;
-import com.jp.daichi.ex5.enemy.ThickBeamTurret;
-import com.jp.daichi.ex5.enemy.TurretEnemy;
+import com.jp.daichi.ex5.enemy.*;
 import com.jp.daichi.ex5.stage.*;
 import com.jp.daichi.ex5.utils.Utils;
 
@@ -15,7 +11,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +20,7 @@ public class MainFrame{
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();//メイン画面
+        frame.setSize(600,600);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);//サイズ指定
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//×を押したらプログラムが終了するように
@@ -55,16 +51,16 @@ public class MainFrame{
         keyBind = new KeyBind(display);
         Player player = new Player(game, game.getWidth()/2.0,game.getHeight()/2.0, 30);
         game.setPlayer(player);
-        //Stage stage = new FirstStage(player);
+        //*
         List<SlideSpawnInfo> infoList = new ArrayList<>();
 
-        SlideSpawnStage.TurretEnemyFactory factory1 = (_game, x, y, vec2d) -> new BeamTurretEnemy(_game, x, y, 30, 5, null, vec2d);
+        SlideSpawnStage.TurretEnemyFactory factory1 = (_game, x, y) -> new BeamTurretEnemy(_game, null, x, y, 30, 5);
         infoList.add(new SlideSpawnInfo(factory1, Utils.playerSpeed * 0.3, Utils.playerSpeed * 0.5, 1.5));
         Stage stage1 = new SlideSpawnStage(player, infoList.get(0));
-        SlideSpawnStage.TurretEnemyFactory factory2 = (_game, x, y, vec2d) -> new HomingExplosionTurret(_game, x, y, 40, 10, null, vec2d);
+        SlideSpawnStage.TurretEnemyFactory factory2 = (_game, x, y) -> new HomingExplosionTurret(_game, null, x, y, 40, 10);
         infoList.add(new SlideSpawnInfo(factory2, Utils.playerSpeed * 0.1, Utils.playerSpeed * 0.2, 1.5));
         Stage stage2 = new SlideSpawnStage(player, infoList.get(1));
-        SlideSpawnStage.TurretEnemyFactory factory3 = (_game, x, y, vec2d) -> new ThickBeamTurret(_game, x, y, 10, 50, vec2d);
+        SlideSpawnStage.TurretEnemyFactory factory3 = (_game, x, y) -> new ThickBeamTurret(_game,null, x, y, 50, 10);
         double thickBeamStartSpeed = Utils.playerSpeed * 0.1;
         double thickBeamEndSpeed = 0;
         double thickBeamEndSlideTime = 5;
@@ -76,7 +72,16 @@ public class MainFrame{
             stages.set(i, new SlideSpawnStage(player, factories, thickBeamStartSpeed, thickBeamEndSpeed, thickBeamEndSlideTime));
         }
         game.setStageFlow(StageFlow.StageFlowFactory.createInstance().add(stage1).add(stage2).addAll(stages).add(new EndlessStage(player,infoList)).create());
-        //game.setStageFlow(StageFlow.StageFlowFactory.createInstance().add(new EndlessStage(player,infoList)).create());
+        //*/
+        /*
+        game.setStageFlow(StageFlow.StageFlowFactory.createInstance().add(new EndlessStage(player,Collections.singletonList(
+                new SlideSpawnInfo((_game,x,y,vec2d)->{
+                    NoAITurret turret = new NoAITurret(_game,x,y,20,10,player);
+                    turret.setMaxSpeed(Utils.playerSpeed * 0.5);
+                    turret.setRotation(Utils.getRotation(vec2d));
+                    return turret;
+                    },Utils.playerSpeed * 0.3, Utils.playerSpeed * 0.5, 1.5)))).create());
+*/
 
         game.addEntity(player);
         frame.setVisible(true);//表示

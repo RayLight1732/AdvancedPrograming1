@@ -1,6 +1,8 @@
 package com.jp.daichi.ex4;
 
-public class Vec2d {
+import java.util.ArrayList;
+
+public class Vec2d implements Cloneable {
 
     public double x;
     public double y;
@@ -54,8 +56,20 @@ public class Vec2d {
         return this;
     }
 
+    public double dot(Vec2d vec2d) {
+        return this.x*vec2d.x + this.y*vec2d.y;
+    }
     @Override
     public String toString() {
         return "["+x+","+y+"]";
+    }
+
+    public Vec2d copy() {
+        try {
+            return (Vec2d) this.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

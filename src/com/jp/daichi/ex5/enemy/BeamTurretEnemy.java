@@ -36,17 +36,13 @@ public class BeamTurretEnemy extends TurretEnemy {
     private int bulletCount = 0;
 
 
-    public BeamTurretEnemy(Game game, double x, double y, double size, double hp, LivingEntity target) {
-        super(game,createShape(x,y,size), size, hp,target);
-    }
-
-    public BeamTurretEnemy(Game game, double x, double y, double size, double hp, LivingEntity target,Vec2d direction) {
-        super(game,createShape(x,y,size), size, hp,target,direction);
+    public BeamTurretEnemy(Game game, LivingEntity target, double x, double y, double size, double hp) {
+        super(game,createShape(x,y,size), target, size, hp);
     }
 
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    public void doTick(double deltaTime) {
+        super.doTick(deltaTime);
         if (firstCoolTime > 0) {
             firstCoolTime -= deltaTime;
             return;
@@ -61,7 +57,8 @@ public class BeamTurretEnemy extends TurretEnemy {
         } else {
             if (bulletCoolTime <= 0 && getTarget() != null) {
                 bulletCount++;
-                Vec2d vec = new Vec2d(getTarget().getX()-getX(),getTarget().getY()-getY());
+                //Vec2d vec = new Vec2d(getTarget().getX()-getX(),getTarget().getY()-getY());
+                Vec2d vec = Utils.getDirectionVector(this);
                 if (vec.normalize()) {//正規化成功したとき
                     vec.multiple(Utils.enemyBulletSpeed);
                     Bullet bullet = new Bullet(getGame(),this,30, getX(), getY(), vec,1);

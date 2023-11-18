@@ -15,11 +15,10 @@ public interface Game {
     List<GameEntity> getEntities();
 
     /**
-     * ゲームエンティティをゲームから削除
+     * ゲームエンティティをゲームから削除するようマークする。
      * @param entity 削除するエンティティ
-     * @return 削除に成功したか
      */
-    boolean removeEntity(GameEntity entity);
+    void removeEntity(GameEntity entity);
 
     /**
      * ゲームエンティティをゲームに登録
