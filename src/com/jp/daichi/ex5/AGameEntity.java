@@ -7,13 +7,19 @@ import com.jp.daichi.ex4.Vec2d;
 import java.awt.*;
 import java.awt.geom.Area;
 
-public abstract class AGameEntity implements GameEntity {
+public abstract class AGameEntity implements GameEntity,OldRenderEntity {
 
-    private static final double dumpingRate = 1;//一秒で100%減衰
     protected final Game game;//対象のゲーム
     protected double size;//サイズ
     protected RotationalObject displayEntity;//描画用オブジェクト
     protected boolean isVisible = true;
+    protected double lastTickX;
+    protected double lastTickY;
+    protected double lastTickRotation;
+    protected boolean lastTickExisted = false;
+    protected double newX;
+    protected double newY;
+    protected double newRotation;
 
     public AGameEntity(Game game,double size,RotationalObject displayEntity) {
         this.game = game;
@@ -30,14 +36,39 @@ public abstract class AGameEntity implements GameEntity {
     }
 
     @Override
-    public void tick(double deltaTime) {
+    public final void tick(double deltaTime) {
+        lastTickExisted = true;
+        double lastTickX = getX();
+        double lastTickY = getY();
+        double lastTickRotation = getRotation();
         displayEntity.setTickState(TickState.ProcessTick);
         displayEntity.tick(deltaTime);
+        doTick(deltaTime);
+        this.lastTickX = lastTickX;
+        this.lastTickY = lastTickY;
+        this.lastTickRotation = lastTickRotation;
+        newX = getX();
+        newY = getY();
+        newRotation = getRotation();
     }
+
+
+    protected abstract void doTick(double deltaTime);
+
 
     @Override
     public double getX() {
         return displayEntity.getX();
+    }
+
+    @Override
+    public double getLastTickX() {
+        return lastTickX;
+    }
+
+    @Override
+    public double getNewX() {
+        return newX;
     }
 
     @Override
@@ -53,6 +84,16 @@ public abstract class AGameEntity implements GameEntity {
     @Override
     public double getY() {
         return displayEntity.getY();
+    }
+
+    @Override
+    public double getNewY() {
+        return newY;
+    }
+
+    @Override
+    public double getLastTickY() {
+        return lastTickY;
     }
 
     @Override
@@ -78,6 +119,16 @@ public abstract class AGameEntity implements GameEntity {
     @Override
     public double getRotation() {
         return displayEntity.getRotation();
+    }
+
+    @Override
+    public double getNewRotation() {
+        return newRotation;
+    }
+
+    @Override
+    public double getLastTickRotation() {
+        return lastTickRotation;
     }
 
     @Override
@@ -142,5 +193,15 @@ public abstract class AGameEntity implements GameEntity {
     @Override
     public int getCollisionRulePriority() {
         return 0;
+    }
+
+    @Override
+    public RotationalObject getRotationalObject() {
+        return displayEntity;
+    }
+
+    @Override
+    public boolean lastTickExisted() {
+        return lastTickExisted;
     }
 }

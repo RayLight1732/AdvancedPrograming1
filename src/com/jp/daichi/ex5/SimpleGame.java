@@ -19,7 +19,7 @@ public class SimpleGame implements Game {
     private Stage stage;
     private double playerDeathTime = 0;
     private int score;
-    private List<GameEntity> markedToRemove = new ArrayList<>();
+    private final List<GameEntity> markedToRemove = new ArrayList<>();
 
     @Override
     public List<GameEntity> getEntities() {
@@ -132,11 +132,6 @@ public class SimpleGame implements Game {
     @Override
     public List<Particle> getParticles() {
         return new ArrayList<>(particles);
-    }
-
-    @Override
-    public void drawEntity(Graphics2D g) {
-        getEntities().forEach(e->e.draw(g));
     }
 
     @Override

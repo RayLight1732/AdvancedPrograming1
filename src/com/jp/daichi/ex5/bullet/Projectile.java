@@ -22,8 +22,7 @@ public abstract class Projectile extends AGameEntity {
         this.damage = damage;
     }
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    public void doTick(double deltaTime) {
         if (getX() < -200 || getGame().getWidth()+200 < getX()
                 || getY() < -200 || getGame().getHeight()+200 < getY()) {
             getGame().removeEntity(this);

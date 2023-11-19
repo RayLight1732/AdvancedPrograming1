@@ -393,7 +393,7 @@ public abstract class AObject {
      * @param y 代表座標のy
      * @return 更新後のエリア
      */
-    protected abstract Area getArea(double x,double y);
+    public abstract Area getArea(double x,double y);
 
     /**
      * 現在の処理状態を取得

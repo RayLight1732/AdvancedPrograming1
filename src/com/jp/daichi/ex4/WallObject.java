@@ -40,7 +40,7 @@ public class WallObject extends AObject {
     }
 
     @Override
-    protected Area getArea(double x, double y) {
+    public Area getArea(double x, double y) {
         return new Area(new Rectangle2D.Double(x,y,width,height));
     }
 

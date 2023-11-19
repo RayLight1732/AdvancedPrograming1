@@ -71,14 +71,6 @@ public abstract class ALivingEntity extends AGameEntity implements LivingEntity 
         }
     }
 
-    @Override
-    public final void tick(double deltaTime) {
-        super.tick(deltaTime);
-        doTick(deltaTime);
-        impulse = false;
-    }
-
-    protected abstract void doTick(double deltaTime);
 
     /**
      * 対象のエンティティに押される

@@ -3,7 +3,6 @@ package com.jp.daichi.ex5;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -14,6 +13,8 @@ import java.awt.image.WritableRaster;
  * 描画用のパネル
  */
 public class Display extends JPanel {
+
+    public boolean draw = true;
 
     private final Game game;//描画するゲーム
     private double ratio = 0;
@@ -26,16 +27,15 @@ public class Display extends JPanel {
         this.ratio = ratio;
     }
 
-    private long lastTime;
     private long lastFrameMeasureTime;
+    private long lastTickMs;
+    private double lastTickDeltaTime;
     private int flame = 0;
     private int flame_tmp = 0;
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         long current = System.currentTimeMillis();
-        //System.out.println(current-lastTime);
-        lastTime = current;
         if (current-lastFrameMeasureTime > 1000) {
             flame = flame_tmp;
             flame_tmp = 0;
@@ -45,6 +45,7 @@ public class Display extends JPanel {
 
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0,0, game.getWidth(), game.getHeight());
+        double step = Math.min((current- lastTickMs)/lastTickDeltaTime/1000,1);
 
         if (g instanceof Graphics2D g2d) {
             //アンチエイリアシング有効化
@@ -52,8 +53,8 @@ public class Display extends JPanel {
             AffineTransform transform = g2d.getTransform();
             transform.scale(ratio,ratio);
             g2d.setTransform(transform);
-            game.drawEntity(g2d);
 
+            drawEntity(g2d,step);
 
             BufferedImage bI = new BufferedImage(game.getWidth(),game.getHeight(),BufferedImage.TYPE_INT_ARGB);
             Graphics2D imageG = bI.createGraphics();
@@ -97,6 +98,15 @@ public class Display extends JPanel {
             g2d.setFont(font);
             drawAlignedString(g2d,UPPER_RIGHT,"Score:"+game.getScore(), game.getWidth(), 0);
         }
+    }
+
+    private void drawEntity(Graphics2D g,double step) {
+        game.getEntities().forEach(entity-> RenderManager.getRender(entity.getClass()).render(g, entity, step));
+    }
+
+    public void setLastTickStatus(long lastTickTime,double lastTickDeltaTime) {
+        this.lastTickMs = lastTickTime;
+        this.lastTickDeltaTime = lastTickDeltaTime;
     }
 
     private static final int CENTER = 0;

@@ -88,6 +88,7 @@ public class Player extends ALivingEntity {
         setVector(direction);//ベクトル設定
 
         if (MainFrame.keyBind.isPressed(KeyEvent.VK_SPACE) && canShootBullet()) {
+            System.out.println("fire");
             direction = Utils.getDirectionVector(this);
             Vec2d shootPos = new Vec2d(getX()+direction.x*size,getY()+direction.y*size);
             direction.multiple(Utils.playerBulletSpeed);

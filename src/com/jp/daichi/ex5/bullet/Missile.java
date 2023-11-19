@@ -18,8 +18,8 @@ public class Missile extends HomingProjectile {
     }
 
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    public void doTick(double deltaTime) {
+        super.doTick(deltaTime);
         life -= deltaTime;
         if (life < 0) {
             game.removeEntity(this);

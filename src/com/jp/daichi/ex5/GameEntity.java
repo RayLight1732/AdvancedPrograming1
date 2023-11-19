@@ -23,11 +23,21 @@ public interface GameEntity {
 
     double getX();
 
+   // double getNewX();
+
+    double getNewX();
+    double getLastTickX();
+
+
     void setX(double x);
 
     void setX(double x,boolean teleported);
 
     double getY();
+
+
+    double getNewY();
+    double getLastTickY();
 
     void setY(double y);
 
@@ -36,6 +46,12 @@ public interface GameEntity {
     void setVector(Vec2d vec);
     Vec2d getVector();
     double getRotation();
+
+    //double getNewRotation();
+
+    double getLastTickRotation();
+
+    double getNewRotation();
 
     void setRotation(double rotation);
 
@@ -59,5 +75,11 @@ public interface GameEntity {
      * @return このエンティティが対象のエンティティを攻撃できるならtrue
      */
     boolean canAttack(GameEntity entity);
+
+    /**
+     * 1tick経過したか
+     * @return 1tickでも経過していたらtrue
+     */
+    boolean lastTickExisted();
 
 }

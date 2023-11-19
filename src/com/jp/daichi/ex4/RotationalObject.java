@@ -99,9 +99,9 @@ public abstract class RotationalObject extends AColoredObject {
 
 
     @Override
-    protected Area getArea(double x, double y) {
+    public Area getArea(double x, double y) {
         return getArea(x,y,getRotation());
     }
 
-    protected abstract Area getArea(double x, double y, double rotation);
+    public abstract Area getArea(double x, double y, double rotation);
 }

@@ -31,8 +31,8 @@ public abstract class HomingProjectile extends Projectile {
     }
 
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    public void doTick(double deltaTime) {
+        super.doTick(deltaTime);
         GameEntity target = getTarget();
         if (target != null) {
             /*

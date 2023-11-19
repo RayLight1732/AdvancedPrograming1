@@ -2,6 +2,8 @@ package com.jp.daichi.ex5;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class UpdateThreadRunnable2 implements Runnable {
     private static final double tickRate = 1/20.0;
@@ -30,7 +32,9 @@ public class UpdateThreadRunnable2 implements Runnable {
         while (true) {
             long current = System.currentTimeMillis();//現在の時間
             double deltaTime = (current - lastTime) / 1000.0;//ミリ秒->秒に変換
-            if (deltaTime>tickRate) {
+            if (deltaTime > tickRate) {
+
+                panel.setLastTickStatus(current,deltaTime);
                 game.tick(deltaTime);//tick処理
                 lastTime = current;//時間更新
             }

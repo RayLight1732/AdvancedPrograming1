@@ -25,8 +25,8 @@ public class ThickBeam extends Projectile {
     }
 
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    public void doTick(double deltaTime) {
+        super.doTick(deltaTime);
         Vec2d pos = positionConverter.convert(getHolder().getX(),getHolder().getY());
         setX(pos.x);
         setY(pos.y);

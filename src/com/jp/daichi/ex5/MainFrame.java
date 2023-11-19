@@ -1,6 +1,9 @@
 package com.jp.daichi.ex5;
 
+import com.jp.daichi.ex5.bullet.ThickBeam;
 import com.jp.daichi.ex5.enemy.*;
+import com.jp.daichi.ex5.render.OldDefaultRender;
+import com.jp.daichi.ex5.render.TestRender;
 import com.jp.daichi.ex5.stage.*;
 import com.jp.daichi.ex5.utils.Utils;
 
@@ -11,6 +14,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +31,8 @@ public class MainFrame{
 
         SimpleGame game = new SimpleGame();//ゲームのインスタンス生成
         Display display = new Display(game);//描画用パネル
+        RenderManager.registerRender(AGameEntity.class, OldDefaultRender::new);
+        RenderManager.registerRender(ThickBeam.class, TestRender::new);
         frame.setLayout(null);
         frame.addComponentListener(new ComponentAdapter() {
             @Override
@@ -51,7 +57,7 @@ public class MainFrame{
         keyBind = new KeyBind(display);
         Player player = new Player(game, game.getWidth()/2.0,game.getHeight()/2.0, 30);
         game.setPlayer(player);
-        //*
+        /*
         List<SlideSpawnInfo> infoList = new ArrayList<>();
 
         SlideSpawnStage.TurretEnemyFactory factory1 = (_game, x, y) -> new BeamTurretEnemy(_game, null, x, y, 30, 5);
@@ -72,7 +78,7 @@ public class MainFrame{
             stages.set(i, new SlideSpawnStage(player, factories, thickBeamStartSpeed, thickBeamEndSpeed, thickBeamEndSlideTime));
         }
         game.setStageFlow(StageFlow.StageFlowFactory.createInstance().add(stage1).add(stage2).addAll(stages).add(new EndlessStage(player,infoList)).create());
-        //*/
+        /*/
         /*
         game.setStageFlow(StageFlow.StageFlowFactory.createInstance().add(new EndlessStage(player,Collections.singletonList(
                 new SlideSpawnInfo((_game,x,y,vec2d)->{
@@ -81,7 +87,8 @@ public class MainFrame{
                     turret.setRotation(Utils.getRotation(vec2d));
                     return turret;
                     },Utils.playerSpeed * 0.3, Utils.playerSpeed * 0.5, 1.5)))).create());
-*/
+        */
+        game.setStageFlow(StageFlow.StageFlowFactory.createInstance().add(new SlideSpawnStage(player, Arrays.asList((_game,x,y)-> new ThickBeamTurret(_game,null, x, y, 50, 10),null,null,null),0,0,1)).create());
 
         game.addEntity(player);
         frame.setVisible(true);//表示
