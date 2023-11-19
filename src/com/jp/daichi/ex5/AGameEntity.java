@@ -35,9 +35,12 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
         displayEntity.collisionTick(deltaTime);
     }
 
+    private long lastTickTime;
+    private double lastTickDelta;
+
     @Override
     public final void tick(double deltaTime) {
-        lastTickExisted = true;
+        System.out.println("tick");
         double lastTickX = getX();
         double lastTickY = getY();
         double lastTickRotation = getRotation();
@@ -50,6 +53,10 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
         newX = getX();
         newY = getY();
         newRotation = getRotation();
+        this.lastTickTime = System.currentTimeMillis();
+        this.lastTickDelta = deltaTime;
+        lastTickExisted = true;
+        System.out.println("end tick");
     }
 
 
@@ -203,5 +210,13 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
     @Override
     public boolean lastTickExisted() {
         return lastTickExisted;
+    }
+
+    public long lastTickMs() {
+        return lastTickTime;
+    }
+
+    public double lastTickDelta() {
+        return lastTickDelta;
     }
 }

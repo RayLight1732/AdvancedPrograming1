@@ -42,6 +42,7 @@ public class Display extends JPanel {
             lastFrameMeasureTime = current;
         }
         flame_tmp++;
+        System.out.println("start rendering");
 
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0,0, game.getWidth(), game.getHeight());
@@ -98,13 +99,16 @@ public class Display extends JPanel {
             g2d.setFont(font);
             drawAlignedString(g2d,UPPER_RIGHT,"Score:"+game.getScore(), game.getWidth(), 0);
         }
+
+        System.out.println("end rendering");
     }
 
     private void drawEntity(Graphics2D g,double step) {
-        game.getEntities().forEach(entity-> RenderManager.getRender(entity.getClass()).render(g, entity, step));
+        game.getEntities().forEach(entity-> RenderManager.getRender(entity.getClass()).render(g, entity,Math.min( (System.currentTimeMillis()-entity.lastTickMs())/entity.lastTickDelta()/1000,1)));
     }
 
     public void setLastTickStatus(long lastTickTime,double lastTickDeltaTime) {
+        System.out.println("update");
         this.lastTickMs = lastTickTime;
         this.lastTickDeltaTime = lastTickDeltaTime;
     }

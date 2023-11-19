@@ -82,4 +82,8 @@ public interface GameEntity {
      */
     boolean lastTickExisted();
 
+    long lastTickMs();
+
+    double lastTickDelta();
+
 }

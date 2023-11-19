@@ -30,7 +30,9 @@ public class TestRender implements Render<ThickBeam> {
         if (newR2 == lastR) {
             lastR2 = lastR;
             newR2 = newR;
-            System.out.println(step);
+            if (step > 0.5) {
+                System.out.println(step+" error");
+            }
         } else if (newR2 == newR) {
 
         } else {
@@ -38,7 +40,7 @@ public class TestRender implements Render<ThickBeam> {
             lastR2 = lastR;
             newR2 = newR;
         }
-        System.out.println(newR+","+lastR+","+step);
+        //System.out.println(newR+","+lastR+","+step);
     }
 
     private double getRenderPos(double step,double now,double last) {
