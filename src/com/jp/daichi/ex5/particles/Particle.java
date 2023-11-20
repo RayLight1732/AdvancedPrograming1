@@ -1,16 +1,20 @@
 package com.jp.daichi.ex5.particles;
 
+import com.jp.daichi.ex4.RotationalObject;
+import com.jp.daichi.ex5.AGameEntity;
+import com.jp.daichi.ex5.Game;
+import com.jp.daichi.ex5.GameObject;
+
 import java.awt.*;
 
-public interface Particle {
+public interface Particle extends GameObject {
 
-    void tick(double deltaTime);
-
-    void draw(Graphics2D g);
 
     /**
      * 描画が終わっているか
      * @return 描画が終わっているならtrue
      */
-    boolean isEndDrawing();
+    boolean isEnd();
+
+    void setEnd(boolean end);
 }

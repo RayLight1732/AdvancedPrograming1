@@ -1,11 +1,10 @@
 package com.jp.daichi.ex5;
 
-import com.jp.daichi.ex5.enemy.Enemy;
+import com.jp.daichi.ex5.base.enemy.Enemy;
 import com.jp.daichi.ex5.particles.Particle;
 import com.jp.daichi.ex5.stage.Stage;
 import com.jp.daichi.ex5.stage.StageFlow;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +95,7 @@ public class SimpleGame implements Game {
         for (GameEntity e : entities) {
             e.tick(deltaTime);//ティック処理
         }
-        particles.removeIf(Particle::isEndDrawing);
+        particles.removeIf(Particle::isEnd);
         for (Particle particle:new ArrayList<>(particles)) {
             particle.tick(deltaTime);
         }
@@ -132,11 +131,6 @@ public class SimpleGame implements Game {
     @Override
     public List<Particle> getParticles() {
         return new ArrayList<>(particles);
-    }
-
-    @Override
-    public void drawParticle(Graphics2D g) {
-        getParticles().forEach(p->p.draw(g));
     }
 
     @Override

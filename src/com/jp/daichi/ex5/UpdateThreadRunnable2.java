@@ -33,8 +33,6 @@ public class UpdateThreadRunnable2 implements Runnable {
             long current = System.currentTimeMillis();//現在の時間
             double deltaTime = (current - lastTime) / 1000.0;//ミリ秒->秒に変換
             if (deltaTime > tickRate) {
-
-                panel.setLastTickStatus(current,deltaTime);
                 game.tick(deltaTime);//tick処理
                 lastTime = current;//時間更新
             }
