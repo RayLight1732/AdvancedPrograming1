@@ -1,4 +1,4 @@
-package com.jp.daichi.ex5.enemy;
+package com.jp.daichi.ex5.base.enemy;
 
 import com.jp.daichi.ex4.RPolygonObject;
 import com.jp.daichi.ex4.Vec2d;

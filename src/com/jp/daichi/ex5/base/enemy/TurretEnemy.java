@@ -1,4 +1,4 @@
-package com.jp.daichi.ex5.enemy;
+package com.jp.daichi.ex5.base.enemy;
 
 import com.jp.daichi.ex4.RotationalObject;
 import com.jp.daichi.ex4.Vec2d;
@@ -25,13 +25,13 @@ public abstract class TurretEnemy extends Enemy {
     }
 
     @Override
-    protected void doTick(double deltaTime) {
+    protected void doTick_(double deltaTime) {
         //ma'=ma-kv
         //終端速度=maxSpeed
         //ma=kv
         //k=ma/maxSpeed
+        super.doTick_(deltaTime);
         if (target != null) {
-            if (!impulse) {
                 setRotation(Utils.getRotation(new Vec2d(target.getX() - getX(), target.getY() - getY()), getRotation(), getRotationLimit() * deltaTime));
                 double k = acceleration/maxSpeed;
                 Vec2d a = Utils.getDirectionVector(this);//加速度
@@ -39,7 +39,6 @@ public abstract class TurretEnemy extends Enemy {
                 a.multiple(getAcceleration());//指定した加速度に伸ばす
                 Vec2d newA = a.subtract(getVector().multiple(k));//新しい加速度はma-kvから導く
                 setVector(getVector().add(newA.multiple(deltaTime)));
-            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.jp.daichi.ex5.enemy;
+package com.jp.daichi.ex5.base.enemy;
 
 import com.jp.daichi.ex4.RPolygonObject;
 import com.jp.daichi.ex4.RotationalObject;
@@ -26,7 +26,8 @@ public abstract class Enemy extends ALivingEntity {
     }
 
     @Override
-    protected void doTick(double deltaTime) {
+    protected void doTick_(double deltaTime) {
+        super.doTick_(deltaTime);
         if (damageCoolTime >= 0) {
             damageCoolTime = Math.max(0, damageCoolTime -deltaTime);
             if ((int)(damageCoolTime *10)%2!=0) {

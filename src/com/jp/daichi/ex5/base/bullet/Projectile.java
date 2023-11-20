@@ -1,4 +1,4 @@
-package com.jp.daichi.ex5.bullet;
+package com.jp.daichi.ex5.base.bullet;
 
 import com.jp.daichi.ex4.RotationalObject;
 import com.jp.daichi.ex5.AGameEntity;
@@ -22,7 +22,8 @@ public abstract class Projectile extends AGameEntity {
         this.damage = damage;
     }
     @Override
-    public void doTick(double deltaTime) {
+    public void doTick_(double deltaTime) {
+        super.doTick_(deltaTime);
         if (getX() < -200 || getGame().getWidth()+200 < getX()
                 || getY() < -200 || getGame().getHeight()+200 < getY()) {
             getGame().removeEntity(this);

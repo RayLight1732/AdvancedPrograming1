@@ -1,13 +1,17 @@
 package com.jp.daichi.ex5;
 
+import com.jp.daichi.ex5.render.Render;
+import com.jp.daichi.ex5.utils.ResourceManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描画用のパネル
@@ -28,10 +32,16 @@ public class Display extends JPanel {
     }
 
     private long lastFrameMeasureTime;
-    private long lastTickMs;
-    private double lastTickDeltaTime;
     private int flame = 0;
     private int flame_tmp = 0;
+
+    private Image image;
+    private Image getBackGroundImage() {
+        if (image == null) {
+            image = ResourceManager.getImage("background.png");
+        }
+        return image;
+    }
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -42,11 +52,8 @@ public class Display extends JPanel {
             lastFrameMeasureTime = current;
         }
         flame_tmp++;
-        System.out.println("start rendering");
-
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0,0, game.getWidth(), game.getHeight());
-        double step = Math.min((current- lastTickMs)/lastTickDeltaTime/1000,1);
+        //g.setColor(Color.DARK_GRAY);
+        //g.fillRect(0,0, game.getWidth(), game.getHeight());
 
         if (g instanceof Graphics2D g2d) {
             //アンチエイリアシング有効化
@@ -54,32 +61,29 @@ public class Display extends JPanel {
             AffineTransform transform = g2d.getTransform();
             transform.scale(ratio,ratio);
             g2d.setTransform(transform);
+            g.drawImage(getBackGroundImage(),0,0,null);
 
-            drawEntity(g2d,step);
+            List<GameEntity> inParticleTick = drawEntity(g2d);
 
+            /*
             BufferedImage bI = new BufferedImage(game.getWidth(),game.getHeight(),BufferedImage.TYPE_INT_ARGB);
             Graphics2D imageG = bI.createGraphics();
             imageG.setTransform(transform);
             imageG.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
             imageG.setComposite(AdditiveComposite.getInstance());
-            game.drawParticle(imageG);
+            drawParticle(imageG);
             g2d.setTransform(new AffineTransform());
             g2d.drawImage(bI,0,0,null);
             imageG.dispose();
-
-            double maxHPBarLength = game.getWidth()*0.7;
-            double hpBarHeight = 20;
             g2d.setTransform(transform);
-            LivingEntity player = game.getPlayer();
-            if (player != null) {
-                double barLength = player.getHP()/player.getMaxHP()*maxHPBarLength;
-                RoundRectangle2D r = new RoundRectangle2D.Double((game.getWidth()-barLength)/2,(game.getHeight()-hpBarHeight*2),barLength,hpBarHeight,hpBarHeight,hpBarHeight);
-                g2d.setColor(Color.CYAN);
-                g2d.fill(r);
-            }
-            g2d.setColor(Color.WHITE);
-            RoundRectangle2D r2 = new RoundRectangle2D.Double((game.getWidth()-maxHPBarLength)/2,(game.getHeight()-hpBarHeight*2),maxHPBarLength,hpBarHeight,hpBarHeight,hpBarHeight);
-            g2d.draw(r2);
+             */
+            Composite old = g2d.getComposite();
+            g2d.setComposite(AdditiveComposite.getInstance());
+            drawParticle(g2d,inParticleTick);
+            g2d.setComposite(old);
+
+
+            drawHPBar(g2d);
 
             if (game.getState() == GameState.GAME_OVER) {
                 g2d.setColor(new Color(0,0,0,100));
@@ -100,17 +104,42 @@ public class Display extends JPanel {
             drawAlignedString(g2d,UPPER_RIGHT,"Score:"+game.getScore(), game.getWidth(), 0);
         }
 
-        System.out.println("end rendering");
     }
 
-    private void drawEntity(Graphics2D g,double step) {
-        game.getEntities().forEach(entity-> RenderManager.getRender(entity.getClass()).render(g, entity,Math.min( (System.currentTimeMillis()-entity.lastTickMs())/entity.lastTickDelta()/1000,1)));
+    private List<GameEntity> drawEntity(Graphics2D g) {
+        List<GameEntity> result = new ArrayList<>();
+        for (GameEntity entity:game.getEntities()) {
+            Render<GameObject> render = RenderManager.getRender(entity.getClass());
+            if(render.renderInParticlePhase(entity)) {
+                result.add(entity);
+            } else {
+                render.render(g,entity,calculateStep(entity));
+            }
+        }
+        return result;
     }
 
-    public void setLastTickStatus(long lastTickTime,double lastTickDeltaTime) {
-        System.out.println("update");
-        this.lastTickMs = lastTickTime;
-        this.lastTickDeltaTime = lastTickDeltaTime;
+    private void drawParticle(Graphics2D g,List<GameEntity> entities) {
+        game.getParticles().forEach(particle-> RenderManager.getRender(particle.getClass()).render(g, particle,calculateStep(particle)));
+        entities.forEach(e->RenderManager.getRender(e.getClass()).render(g,e,calculateStep(e)));
+    }
+    private double calculateStep(GameObject object) {
+        return Math.min( (System.currentTimeMillis()-object.lastTickMs())/object.lastTickDelta()/1000,1);
+    }
+
+    private void drawHPBar(Graphics2D g) {
+        double maxHPBarLength = game.getWidth()*0.7;
+        double hpBarHeight = 20;
+        LivingEntity player = game.getPlayer();
+        if (player != null) {
+            double barLength = player.getHP()/player.getMaxHP()*maxHPBarLength;
+            RoundRectangle2D r = new RoundRectangle2D.Double((game.getWidth()-barLength)/2,(game.getHeight()-hpBarHeight*2),barLength,hpBarHeight,hpBarHeight,hpBarHeight);
+            g.setColor(Color.CYAN);
+            g.fill(r);
+        }
+        g.setColor(Color.WHITE);
+        RoundRectangle2D r2 = new RoundRectangle2D.Double((game.getWidth()-maxHPBarLength)/2,(game.getHeight()-hpBarHeight*2),maxHPBarLength,hpBarHeight,hpBarHeight,hpBarHeight);
+        g.draw(r2);
     }
 
     private static final int CENTER = 0;

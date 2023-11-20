@@ -1,10 +1,9 @@
-package com.jp.daichi.ex5.bullet;
+package com.jp.daichi.ex5.base.bullet;
 
 import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.RotationalObject;
 import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.*;
-import com.jp.daichi.ex5.particles.Explosion;
 import com.jp.daichi.ex5.utils.Utils;
 import java.awt.*;
 import java.awt.geom.Path2D;

@@ -1,6 +1,6 @@
 package com.jp.daichi.ex5.render;
 
-import com.jp.daichi.ex5.bullet.ThickBeam;
+import com.jp.daichi.ex5.base.bullet.ThickBeam;
 
 import java.awt.*;
 
@@ -56,5 +56,15 @@ public class TestRender implements Render<ThickBeam> {
             double rotation = getRenderPos(step,newR,lastR);
             doRendering(g, entity,x,y,rotation, step,newR,lastR);
         }
+    }
+
+    @Override
+    public void loadImages() {
+
+    }
+
+    @Override
+    public boolean renderInParticlePhase(ThickBeam entity) {
+        return false;
     }
 }

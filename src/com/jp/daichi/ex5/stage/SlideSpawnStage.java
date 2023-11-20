@@ -3,14 +3,14 @@ package com.jp.daichi.ex5.stage;
 import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.LivingEntity;
-import com.jp.daichi.ex5.enemy.TurretEnemy;
+import com.jp.daichi.ex5.base.enemy.TurretEnemy;
 import com.jp.daichi.ex5.utils.Utils;
 
 import java.util.*;
 
 public class SlideSpawnStage implements Stage {
 
-    private static final int margin = -100;
+    private static final int margin = 10;
     private final List<TurretEnemyFactory> factories;
     private final List<TurretEnemy> enemies = new ArrayList<>();
     private final double startSpeed;

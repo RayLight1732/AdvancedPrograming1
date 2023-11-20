@@ -1,4 +1,4 @@
-package com.jp.daichi.ex5.bullet;
+package com.jp.daichi.ex5.base.bullet;
 
 import com.jp.daichi.ex4.RotationalObject;
 import com.jp.daichi.ex4.Vec2d;
@@ -31,8 +31,8 @@ public abstract class HomingProjectile extends Projectile {
     }
 
     @Override
-    public void doTick(double deltaTime) {
-        super.doTick(deltaTime);
+    public void doTick_(double deltaTime) {
+        super.doTick_(deltaTime);
         GameEntity target = getTarget();
         if (target != null) {
             /*

@@ -7,10 +7,9 @@ import com.jp.daichi.ex5.utils.RotationConverter;
 
 import java.awt.*;
 
-public class Charge extends SmoothRoundSlaveParticle {
+public class Charge extends RoundSlaveParticle {
     private final double expansion;
 
-    private boolean end = false;
     private final double originalRadius;
     private final Color color;
     private double time = 0;
@@ -45,8 +44,7 @@ public class Charge extends SmoothRoundSlaveParticle {
     private double lastSpawnTime = 0;
 
     @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
+    public void doTick(double deltaTime) {
         time += deltaTime;
         if (time-lastSpawnTime > 0.1) {
             lastSpawnTime = time;
@@ -58,45 +56,43 @@ public class Charge extends SmoothRoundSlaveParticle {
         }
         if (time < expansion) {
             setRadius(originalRadius*time/expansion);
+        } else {
+            setRadius(originalRadius);
         }
     }
 
+
+    public double getTime() {
+        return time;
+    }
+
+    public double getExpansionTime() {
+        return expansion;
+    }
+
     @Override
-    protected void draw(Graphics2D g, double x, double y, double radius, double step) {
-        g.setColor(color);
-        if (time >= expansion) {
-            radius = originalRadius+(Math.random()-0.5)*originalRadius*0.05;//半径の1/20で振動
-        }
-        g.fillOval((int)Math.round(x-radius),(int)Math.round(y-radius),(int)Math.round(radius*2),(int)Math.round(radius*2));
+    public Color getColor() {
+        return color;
     }
 
-
-    @Override
-    public boolean isEndDrawing() {
-        return end;
+    public double getOriginalRadius() {
+        return originalRadius;
     }
 
-    public void end(boolean end) {
-        this.end = end;
-    }
-
-    private class Child extends SmoothParticle {
+    public class Child extends RoundParticle {
 
         private double time = 0;
-        private final double radius;
         private boolean end = false;
         private Child(Vec2d position,double radius) {
             setX(position.x);
             setY(position.y);
-            this.radius = radius;
+            setRadius(radius);
         }
 
         @Override
-        public void tick(double deltaTime) {
-            super.tick(deltaTime);
+        public void doTick(double deltaTime) {
             this.time += deltaTime;
             if (time < 1) {
-
                 Vec2d vec = new Vec2d(Charge.this.getX() - getX(), Charge.this.getY() - getY());
                 if (vec.normalize()) {
                     vec.multiple(5 * originalRadius * deltaTime);
@@ -109,14 +105,13 @@ public class Charge extends SmoothRoundSlaveParticle {
         }
 
         @Override
-        protected void draw(Graphics2D g, double x, double y, double step) {
-            g.setColor(color);
-            g.fillOval((int)Math.round(x-radius),(int)Math.round(y-radius),(int)Math.round(radius*2),(int)Math.round(radius*2));
+        public boolean isEnd() {
+            return end || Charge.this.isEnd();
         }
 
         @Override
-        public boolean isEndDrawing() {
-            return end || Charge.this.isEndDrawing();
+        public Color getColor() {
+            return Charge.this.getColor();
         }
     }
 }

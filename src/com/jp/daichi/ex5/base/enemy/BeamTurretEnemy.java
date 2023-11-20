@@ -1,9 +1,9 @@
-package com.jp.daichi.ex5.enemy;
+package com.jp.daichi.ex5.base.enemy;
 
 import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.RotationalObject;
 import com.jp.daichi.ex4.Vec2d;
-import com.jp.daichi.ex5.bullet.Bullet;
+import com.jp.daichi.ex5.base.bullet.Bullet;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.LivingEntity;
 import com.jp.daichi.ex5.utils.Utils;
@@ -41,8 +41,8 @@ public class BeamTurretEnemy extends TurretEnemy {
     }
 
     @Override
-    public void doTick(double deltaTime) {
-        super.doTick(deltaTime);
+    public void doTick_(double deltaTime) {
+        super.doTick_(deltaTime);
         if (firstCoolTime > 0) {
             firstCoolTime -= deltaTime;
             return;

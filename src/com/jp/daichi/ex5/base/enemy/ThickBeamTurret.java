@@ -1,12 +1,11 @@
-package com.jp.daichi.ex5.enemy;
+package com.jp.daichi.ex5.base.enemy;
 
 import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.GameEntity;
 import com.jp.daichi.ex5.LivingEntity;
-import com.jp.daichi.ex5.bullet.Bullet;
 import com.jp.daichi.ex5.Game;
-import com.jp.daichi.ex5.bullet.ThickBeam;
+import com.jp.daichi.ex5.base.bullet.ThickBeam;
 import com.jp.daichi.ex5.particles.Charge;
 import com.jp.daichi.ex5.utils.PositionConverter;
 import com.jp.daichi.ex5.utils.RotationConverter;
@@ -70,7 +69,7 @@ public class ThickBeamTurret extends TurretEnemy {
     }
 
     @Override
-    public void doTick(double deltaTime) {
+    public void doTick_(double deltaTime) {
         GameEntity target = getTarget();
         if (target != null) {
             setRotation(Utils.getRotation(new Vec2d(getTarget().getX() - getX(), getTarget().getY() - getY()), getRotation(), rotationLimit * deltaTime));
@@ -91,7 +90,7 @@ public class ThickBeamTurret extends TurretEnemy {
     @Override
     public void onRemoved() {
         if (charge != null) {
-            charge.end(true);
+            charge.setEnd(true);
         }
         if (bullet != null) {
             game.removeEntity(bullet);

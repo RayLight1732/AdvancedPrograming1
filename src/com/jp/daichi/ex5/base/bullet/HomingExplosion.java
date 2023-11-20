@@ -1,10 +1,11 @@
-package com.jp.daichi.ex5.bullet;
+package com.jp.daichi.ex5.base.bullet;
 
 import com.jp.daichi.ex4.CircleObject;
 import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.GameEntity;
 import com.jp.daichi.ex5.particles.Charge;
+import com.jp.daichi.ex5.particles.Charge2;
 import com.jp.daichi.ex5.particles.Explosion;
 import com.jp.daichi.ex5.utils.Utils;
 
@@ -26,17 +27,17 @@ public class HomingExplosion extends HomingProjectile {
         super(game, holder, size, createShape(x,y,vec2d,size),vec2d.getLength(),rotateSpeed,100,damage);
         this.target = target;
         this.life = life;
-        this.charge = new Charge(this,size,0,color);
+        this.charge = new Charge2(this,size,0,color);
         game.addParticle(charge);
     }
 
     @Override
-    public void doTick(double deltaTime) {
-        super.doTick(deltaTime);
+    public void doTick_(double deltaTime) {
+        super.doTick_(deltaTime);
         life -= deltaTime;
         if (life < 0) {
             game.removeEntity(this);
-            charge.end(true);
+            charge.setEnd(true);
             game.addParticle(new Explosion(getX(),getY(),size*1.5));
         }
     }
@@ -49,13 +50,13 @@ public class HomingExplosion extends HomingProjectile {
     @Override
     public void setVisible(boolean isVisible) {
         super.setVisible(isVisible);
-        charge.end(isVisible);
+        charge.setEnd(isVisible);
     }
 
     @Override
     public void onRemoved() {
         if (charge != null) {
-            charge.end(true);
+            charge.setEnd(true);
         }
     }
 
@@ -63,5 +64,9 @@ public class HomingExplosion extends HomingProjectile {
     public void collideWith(GameEntity entity) {
         super.collideWith(entity);
         game.addParticle(new Explosion(getX(),getY(),size*1.5));
+    }
+
+    public Charge getCharge() {
+        return charge;
     }
 }

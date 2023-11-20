@@ -1,11 +1,10 @@
-package com.jp.daichi.ex5.bullet;
+package com.jp.daichi.ex5.base.bullet;
 
-import com.jp.daichi.ex4.RotationalObject;
 import com.jp.daichi.ex4.Vec2d;
 import com.jp.daichi.ex5.Game;
 import com.jp.daichi.ex5.GameEntity;
 import com.jp.daichi.ex5.utils.Utils;
-import com.jp.daichi.ex5.enemy.Enemy;
+import com.jp.daichi.ex5.base.enemy.Enemy;
 import com.jp.daichi.ex5.particles.Explosion;
 
 public class Missile extends HomingProjectile {
@@ -18,8 +17,8 @@ public class Missile extends HomingProjectile {
     }
 
     @Override
-    public void doTick(double deltaTime) {
-        super.doTick(deltaTime);
+    public void doTick_(double deltaTime) {
+        super.doTick_(deltaTime);
         life -= deltaTime;
         if (life < 0) {
             game.removeEntity(this);
@@ -34,11 +33,12 @@ public class Missile extends HomingProjectile {
             target = null;
         }
         if (target == null) {
-            Vec2d thisDirection = Utils.getDirectionVector(this).multiple(100);
+            Vec2d thisDirection = Utils.getDirectionVector(this).multiple(range);
             double centerX = getX()+thisDirection.x;
             double centerY = getY()+thisDirection.y;
             target = game.getEntities().stream()
                     .filter(it -> it instanceof Enemy)
+                    .filter(it -> Utils.getSqDistance(it.getX(),it.getY(),centerX,centerY) < range*range)
                     .min((o1, o2) -> (int) (Utils.getSqDistance(centerX,centerY,o1.getX(),o1.getY()) - Utils.getSqDistance(centerX,centerY,o2.getX(),o2.getY()))).orElse(null);
         }
         return target;
