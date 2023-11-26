@@ -52,6 +52,10 @@ public abstract class Enemy extends ALivingEntity {
         return !(entity instanceof Enemy);
     }
 
+    /**
+     * 倒した時のスコア
+     * @return
+     */
     public abstract int getScore();
 
 }

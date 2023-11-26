@@ -4,6 +4,11 @@ com.jp.daichi.ex4
 com.jp.daichi.ex5
 com.jp.daichi.ex5.base.bullet
 com.jp.daichi.ex5.base.enemy
+com.jp.daichi.ex5.impl.bullet
 com.jp.daichi.ex5.particles
+com.jp.daichi.ex5.render
 com.jp.daichi.ex5.stage
 com.jp.daichi.ex5.utils
+com.jp.daichi.ex7
+com.jp.daichi.ex7.formula
+com.jp.daichi.ex7.operator

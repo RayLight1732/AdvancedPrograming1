@@ -8,8 +8,21 @@ import com.jp.daichi.ex5.utils.Utils;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
+/**
+ * 弾を表す
+ */
 public class Bullet extends Projectile {
 
+    /**
+     * 弾の形を取得
+     * @param length 長さ
+     * @param width 幅
+     * @param x x座標
+     * @param y y座標
+     * @param vec 速度
+     * @param setCenterToBottom 弾の後ろ側を基準位置にするか
+     * @return 弾
+     */
     public static RotationalObject getBulletShape(double length, double width, double x, double y, Vec2d vec,boolean setCenterToBottom) {
         if (setCenterToBottom) {
             length *= -1;

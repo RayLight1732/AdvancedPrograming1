@@ -11,6 +11,9 @@ import com.jp.daichi.ex5.utils.Utils;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
+/**
+ * 太いビームを放つ敵
+ */
 public class BeamTurretEnemy extends TurretEnemy {
 
     public static RotationalObject createShape(double x, double y, double size) {
@@ -36,6 +39,15 @@ public class BeamTurretEnemy extends TurretEnemy {
     private int bulletCount = 0;
 
 
+    /**
+     * 新しい敵を作成する
+     * @param game 属するゲーム
+     * @param target ターゲット
+     * @param x x座標
+     * @param y y座標
+     * @param size 大きさ
+     * @param hp HP
+     */
     public BeamTurretEnemy(Game game, LivingEntity target, double x, double y, double size, double hp) {
         super(game,createShape(x,y,size), target, size, hp);
     }
