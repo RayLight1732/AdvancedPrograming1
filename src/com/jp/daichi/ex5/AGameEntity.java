@@ -7,19 +7,11 @@ import com.jp.daichi.ex4.Vec2d;
 import java.awt.*;
 import java.awt.geom.Area;
 
-public abstract class AGameEntity implements GameEntity,OldRenderEntity {
+public abstract class AGameEntity extends AGameObject implements GameEntity,OldRenderEntity {
 
     protected final Game game;//対象のゲーム
     protected double size;//サイズ
     protected RotationalObject displayEntity;//描画用オブジェクト
-    protected boolean isVisible = true;
-    protected double lastTickX;
-    protected double lastTickY;
-    protected double lastTickRotation;
-    protected boolean lastTickExisted = false;
-    protected double newX;
-    protected double newY;
-    protected double newRotation;
 
     public AGameEntity(Game game,double size,RotationalObject displayEntity) {
         this.game = game;
@@ -35,32 +27,14 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
         displayEntity.collisionTick(deltaTime);
     }
 
-    private long lastTickTime;
-    private double lastTickDelta;
-
     @Override
-    public final void tick(double deltaTime) {
-        System.out.println("tick");
-        double lastTickX = getX();
-        double lastTickY = getY();
-        double lastTickRotation = getRotation();
+    protected final void doTick(double deltaTime) {
         displayEntity.setTickState(TickState.ProcessTick);
         displayEntity.tick(deltaTime);
-        doTick(deltaTime);
-        this.lastTickX = lastTickX;
-        this.lastTickY = lastTickY;
-        this.lastTickRotation = lastTickRotation;
-        newX = getX();
-        newY = getY();
-        newRotation = getRotation();
-        this.lastTickTime = System.currentTimeMillis();
-        this.lastTickDelta = deltaTime;
-        lastTickExisted = true;
-        System.out.println("end tick");
+        doTick_(deltaTime);
     }
 
-
-    protected abstract void doTick(double deltaTime);
+    protected void doTick_(double deltaTime){}
 
 
     @Override
@@ -68,15 +42,6 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
         return displayEntity.getX();
     }
 
-    @Override
-    public double getLastTickX() {
-        return lastTickX;
-    }
-
-    @Override
-    public double getNewX() {
-        return newX;
-    }
 
     @Override
     public void setX(double x) {
@@ -91,16 +56,6 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
     @Override
     public double getY() {
         return displayEntity.getY();
-    }
-
-    @Override
-    public double getNewY() {
-        return newY;
-    }
-
-    @Override
-    public double getLastTickY() {
-        return lastTickY;
     }
 
     @Override
@@ -126,16 +81,6 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
     @Override
     public double getRotation() {
         return displayEntity.getRotation();
-    }
-
-    @Override
-    public double getNewRotation() {
-        return newRotation;
-    }
-
-    @Override
-    public double getLastTickRotation() {
-        return lastTickRotation;
     }
 
     @Override
@@ -174,16 +119,6 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
     }
 
     @Override
-    public boolean isVisible() {
-        return isVisible;
-    }
-
-    @Override
-    public void setVisible(boolean isVisible) {
-        this.isVisible = isVisible;
-    }
-
-    @Override
     public Game getGame() {
         return game;
     }
@@ -207,16 +142,4 @@ public abstract class AGameEntity implements GameEntity,OldRenderEntity {
         return displayEntity;
     }
 
-    @Override
-    public boolean lastTickExisted() {
-        return lastTickExisted;
-    }
-
-    public long lastTickMs() {
-        return lastTickTime;
-    }
-
-    public double lastTickDelta() {
-        return lastTickDelta;
-    }
 }

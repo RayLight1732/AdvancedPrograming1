@@ -62,7 +62,6 @@ public interface Game {
      */
     List<Particle> getParticles();
 
-    void drawParticle(Graphics2D g);
 
     void setStageFlow(StageFlow stageFlow);
 

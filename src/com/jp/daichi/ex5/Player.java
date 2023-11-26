@@ -3,7 +3,8 @@ package com.jp.daichi.ex5;
 import com.jp.daichi.ex4.PathObject;
 import com.jp.daichi.ex4.RotationalObject;
 import com.jp.daichi.ex4.Vec2d;
-import com.jp.daichi.ex5.bullet.Missile;
+import com.jp.daichi.ex5.base.bullet.Missile;
+import com.jp.daichi.ex5.impl.bullet.PlayerMissile;
 import com.jp.daichi.ex5.utils.Utils;
 
 import java.awt.*;
@@ -39,7 +40,8 @@ public class Player extends ALivingEntity {
 
 
     @Override
-    public void doTick(double deltaTime) {
+    public void doTick_(double deltaTime) {
+        super.doTick_(deltaTime);
         if (!canShootBullet()) {//クールタイムが終わっていないなら
             bulletCoolTime -=deltaTime;//クールタイム減少
         }
@@ -100,7 +102,7 @@ public class Player extends ALivingEntity {
                 double rotation = getRotation()+(1-2*(i%2))*Math.toRadians(10+(int) (i/2)*10);//(1-2*(i%2))　偶数であれば1,奇数であれば-1
                 Vec2d missileDirection = Utils.getDirectionVector(rotation);
                 missileDirection.multiple(Utils.playerBulletSpeed*1.2);
-                Missile missile = new Missile(game,this,30,getX(),getY(),missileDirection,Utils.playerBulletSpeed*1.5,Utils.rotatetionSpeed*1.5,500,2.5,10);
+                Missile missile = new PlayerMissile(game,this,getX(),getY(),missileDirection);
                 game.addEntity(missile);
             }
 
