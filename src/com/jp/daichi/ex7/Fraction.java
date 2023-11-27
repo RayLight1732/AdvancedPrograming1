@@ -134,7 +134,7 @@ public class Fraction implements NumberObject {
 
     //正の時(0を含む)
     public boolean isPositive() {
-        return toBigDecimal().compareTo(BigDecimal.ONE) >= 0;
+        return toBigDecimal().compareTo(BigDecimal.ZERO) >= 0;
     }
 
 

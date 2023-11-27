@@ -133,6 +133,10 @@ public class Calculator {
      * @return 今まで入力された計算式を表示するディスプレイ用の文字列
      */
     public String getTopDisplay() {
+        return getTopDisplay(cOperator);
+    }
+
+    private String getTopDisplay(CalculationOperator cOperator) {
         if (cOperator.isInputEqual()){
             return cOperator.getFormula().toPlainString(true)+" =";
         } else {
@@ -156,11 +160,16 @@ public class Calculator {
         }
     }
 
+
     /**
      * 入力や計算結果を表示するディスプレイ用の文字列を取得
      * @return 入力や計算結果を表示するディスプレイ用の文字列
      */
     public String getBottomDisplay() {
+        return getBottomDisplay(cOperator);
+    }
+
+    private String getBottomDisplay(CalculationOperator cOperator) {
         if (cOperator.isInputEqual()) {
             if (displayAsFraction()) {
                 Fraction fraction = cOperator.getFormula().calculate();
@@ -174,5 +183,19 @@ public class Calculator {
         } else {
             return "";
         }
+    }
+
+    /**
+     * 履歴に記録されている式のString表現を取得する
+     * @param index 履歴のインデックス
+     * @return return[0]にtopDisplay,return[1]にbottomDisplay
+     */
+    public String[] getHistoryDisplay(int index) {
+        CalculationOperator operator = new CalculationOperator(history.getFormulas().get(index),new History());
+        operator.inputEqual();
+        String[] result = new String[2];
+        result[0] = getTopDisplay(operator);
+        result[1] = getBottomDisplay(operator);
+        return result;
     }
 }

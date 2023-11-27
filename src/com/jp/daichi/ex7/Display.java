@@ -42,13 +42,15 @@ public class Display extends JPanel {
     private final Calculator calculator = new Calculator();
     private final KeyListener keyListener;
     private final ResultDisplay resultDisplay;
+    private final HistoryPanel historyPanel;
 
     /**
      * 新しい表示用のクラスを作成する
      */
     public Display() {
         setBackground(Color.GRAY);
-        this.resultDisplay = new ResultDisplay();
+        this.resultDisplay = new ResultDisplay(calculator);
+        this.historyPanel = new HistoryPanel();
         KeyPad keyPad = new KeyPad();
         keyListener = new KeyAdapter() {
             @Override
@@ -61,36 +63,48 @@ public class Display extends JPanel {
                 } else {
                     calculator.getOperator().input(e.getKeyChar());
                 }
-                resultDisplay.update();
+                updatePanel();
             }
         };
 
 
         addKeyListener(keyListener);
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
 
-        GridBagConstraints constraints1 = new GridBagConstraints();
-        constraints1.weightx = 1;
-        constraints1.weighty = 1;
-        constraints1.fill = GridBagConstraints.BOTH;
-        constraints1.gridx = 0;
-        constraints1.gridy = 0;
-        constraints1.gridheight = 3;
-        gridBagLayout.setConstraints(resultDisplay,constraints1);
+        SpringLayout layout = new SpringLayout();
+        setLayout(layout);
+        float ratio = 0.3f;//resultDisplayが占める割合
+        SpringLayout.Constraints constraints0 = layout.getConstraints(this);
+        double resultDisplayHeight = resultDisplay.getMinimumSize().getHeight();
+        double keypadHeight = keyPad.getMinimumSize().getHeight();
+        int height = (int) Math.max(resultDisplayHeight/ratio,keypadHeight/(1-ratio));
+        //h:dH = 1:ratio
+        //h = dH/ratio
+        //h:kH = 1:(1-ratio)
+        //h = kh/(1-ratio)
+        int width = (int) Math.max(resultDisplay.getPreferredSize().getWidth(),keyPad.getPreferredSize().getWidth());
+        constraints0.setHeight(Spring.constant(height,height,Integer.MAX_VALUE));
+        constraints0.setWidth(Spring.constant(width));
+        Spring panelH = layout.getConstraint(SpringLayout.HEIGHT,this);
+        SpringLayout.Constraints constraints1 = layout.getConstraints(resultDisplay);
+        constraints1.setHeight(Spring.scale(panelH,ratio));
+        constraints1.setY(Spring.constant(0));
+        layout.putConstraint(SpringLayout.NORTH,resultDisplay,0,SpringLayout.NORTH,this);
+        layout.putConstraint(SpringLayout.WEST,resultDisplay,0,SpringLayout.WEST,this);
+        layout.putConstraint(SpringLayout.EAST,resultDisplay,0,SpringLayout.EAST,this);
 
-        GridBagConstraints constraints2 = new GridBagConstraints();
-        constraints2.fill = GridBagConstraints.BOTH;
-        constraints2.weightx = 1;
-        constraints2.weighty = 1;
-        constraints2.gridx = 0;
-        constraints2.gridy = 3;
-        constraints2.gridheight = 10;
-        gridBagLayout.setConstraints(keyPad,constraints2);
-
+        layout.putConstraint(SpringLayout.NORTH,keyPad,0,SpringLayout.SOUTH,resultDisplay);
+        layout.putConstraint(SpringLayout.WEST,keyPad,0,SpringLayout.WEST,this);
+        layout.putConstraint(SpringLayout.EAST,keyPad,0,SpringLayout.EAST,this);
+        layout.putConstraint(SpringLayout.SOUTH,keyPad,0,SpringLayout.SOUTH,this);
+        setBackground(Color.BLACK);
         add(resultDisplay);
         add(keyPad);
 
+    }
+
+    private void updatePanel() {
+        resultDisplay.update();
+        historyPanel.update();
     }
 
 
@@ -106,12 +120,14 @@ public class Display extends JPanel {
     }
     private static final Font font = new Font(Font.SANS_SERIF,Font.PLAIN,20);
     public static final Font font2 = new Font(Font.SANS_SERIF,Font.PLAIN,40);
-    private class ResultDisplay extends JPanel {
+    private static class ResultDisplay extends JPanel {
+        private final Calculator calculator;
 
         private final JLabel topDisplay;
         private final JLabel bottomDisplay;
 
-        private ResultDisplay() {
+        private ResultDisplay(Calculator calculator) {
+            this.calculator = calculator;
             SpringLayout layout = new SpringLayout();
             setLayout(layout);
             Border border = BorderFactory.createEmptyBorder(0,0,0,20);
@@ -127,26 +143,30 @@ public class Display extends JPanel {
             bottomDisplay.setFont(font2);
             bottomDisplay.setBorder(border);
 
+            SpringLayout.Constraints constraints = layout.getConstraints(this);
+            float ratio = 0.3f;
+            int height = (int) Math.max(topDisplay.getFontMetrics(font).getHeight()/ratio,bottomDisplay.getFontMetrics(font2).getHeight()/(1-ratio));
+            //h:dH = 1:ratio
+            //h = dH/ratio
+            //h:kH = 1:(1-ratio)
+            //h = kh/(1-ratio)
+            constraints.setHeight(Spring.constant(height));
             Spring panelH = layout.getConstraint(SpringLayout.HEIGHT,this);
             SpringLayout.Constraints constraints1 = layout.getConstraints(topDisplay);
-            constraints1.setY(Spring.constant(0));
-            //constraints1.setHeight(Spring.constant(topDisplay.getFontMetrics(topDisplay.getFont()).getHeight(),topDisplay.getFontMetrics(topDisplay.getFont()).getHeight(),Integer.MAX_VALUE));
-            constraints1.setHeight(Spring.scale(panelH,0.2f));
-            SpringLayout.Constraints constraints2 = layout.getConstraints(bottomDisplay);
-            constraints2.setHeight(Spring.scale(panelH,0.8f));
+            constraints1.setHeight(Spring.scale(panelH,ratio));
 
             layout.putConstraint(SpringLayout.NORTH,topDisplay,0,SpringLayout.NORTH,this);
             layout.putConstraint(SpringLayout.WEST,topDisplay,0,SpringLayout.WEST,this);
             layout.putConstraint(SpringLayout.EAST,topDisplay,0,SpringLayout.EAST,this);
-            //layout.putConstraint(SpringLayout.NORTH,bottomDisplay,0,SpringLayout.SOUTH,topDisplay);
+
+            layout.putConstraint(SpringLayout.NORTH,bottomDisplay,0,SpringLayout.SOUTH,topDisplay);
             layout.putConstraint(SpringLayout.WEST,bottomDisplay,0,SpringLayout.WEST,this);
             layout.putConstraint(SpringLayout.EAST,bottomDisplay,0,SpringLayout.EAST,this);
             layout.putConstraint(SpringLayout.SOUTH,bottomDisplay,0,SpringLayout.SOUTH,this);
 
+
             add(topDisplay);
             add(bottomDisplay);
-            validate();
-            System.out.println("preferred size:"+getPreferredSize());
         }
 
         public void update() {
@@ -154,6 +174,20 @@ public class Display extends JPanel {
             bottomDisplay.setText(calculator.getBottomDisplay());
         }
     }
+
+    private class HistoryPanel extends JPanel {
+
+        private HistoryPanel() {
+            setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+        }
+
+        public void update() {
+            for (int i = 0;i < calculator.getHistory().getFormulas().size();i++) {
+                //TODO
+            }
+        }
+    }
+
     private class KeyPad extends JPanel {
         private KeyPad() {
             setBackground(Color.GRAY);
@@ -227,7 +261,7 @@ public class Display extends JPanel {
             button.setText(text);
             button.addActionListener(e->{
                 listener.actionPerformed(e);
-                resultDisplay.update();
+                Display.this.updatePanel();
                 for (Map.Entry<JButton,TextUpdateHandler> entry:textUpdateHandlers.entrySet()) {
                     entry.getKey().setText(entry.getValue().update(calculator));
                 }

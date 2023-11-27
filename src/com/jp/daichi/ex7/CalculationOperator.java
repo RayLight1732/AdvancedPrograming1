@@ -117,23 +117,27 @@ public class CalculationOperator {
             formulaStack.push(formula);
             inputDot = false;
         } else if (n == ')') {
-            //)が入力されたとき
-            //最後が演算子なら取り除く
-            //取り除いた後、何も入力されていなければ、括弧を無かったことにする
-            //そうでないならstackから取り除く
-            if (formulaStack.size() >= 2) {
-                if (formulaStack.peek().getTail() instanceof Operator) {
-                    formulaStack.peek().removeTail();
-                }
-                Formula formula = formulaStack.pop();
-                if (formula.isEmpty()) {
-                    formulaStack.peek().removeTail();//式
-                } else {
-                    formula.setCloseBracket(true);
-                }
-            }
-            inputDot = false;
+            closeBracket();
         }
+    }
+
+    private void closeBracket() {
+        //)が入力されたとき
+        //最後が演算子なら取り除く
+        //取り除いた後、何も入力されていなければ、括弧を無かったことにする
+        //そうでないならstackから取り除く
+        if (formulaStack.size() >= 2) {
+            if (formulaStack.peek().getTail() instanceof Operator) {
+                formulaStack.peek().removeTail();
+            }
+            Formula formula = formulaStack.pop();
+            if (formula.isEmpty()) {
+                formulaStack.peek().removeTail();//式
+            } else {
+                formula.setCloseBracket(true);
+            }
+        }
+        inputDot = false;
     }
 
     private boolean canInputFirstNumber() {
@@ -185,7 +189,7 @@ public class CalculationOperator {
     public void inputEqual() {
         //括弧が開いていれば閉じる
         while (formulaStack.size() != 1) {
-            input(')');
+            closeBracket();
         }
         if (formulaStack.peek().getTail() instanceof Operator) {
             //最後が演算子の時取り除く
@@ -224,9 +228,17 @@ public class CalculationOperator {
             formula.append(fraction);
             formulaStack.peek().removeTail();
             append(formula);
+        } else {
+            if (!lastIsOperator()&& !topFormulaIsEmpty()) {
+                append(Operators.MULTIPLY);
+            }
+            Formula formula = factory.create();
+            append(formula);
+            formula.setCloseBracket(false);
+            formulaStack.push(formula);
+            inputDot = false;
         }
     }
-
     public void clearInputNumber() {
         if (formulaStack.peek().getTail() instanceof Fraction) {
             formulaStack.peek().removeTail();
@@ -324,20 +336,6 @@ public class CalculationOperator {
         }
     }
 
-    /**
-     * 直系の子どもにnumberObjectがいるかどうか
-     * @param formula
-     * @param numberObject
-     * @return
-     */
-    private boolean haveChild(Formula formula,NumberObject numberObject) {
-        for (MathObject mathObject:formula.getList()) {
-            if (mathObject == numberObject) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public Formula getHolder(NumberObject numberObject) {
         return getHolder(head,numberObject);

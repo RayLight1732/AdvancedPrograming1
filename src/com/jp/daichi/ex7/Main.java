@@ -3,6 +3,7 @@ package com.jp.daichi.ex7;
 import com.jp.daichi.ex7.operator.Operators;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Main {
 
@@ -11,6 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
+        frame.setLayout(new BorderLayout());
         Display display = new Display();
         frame.add(display);
         frame.setSize(400,600);
