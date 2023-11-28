@@ -1,6 +1,6 @@
 package com.jp.daichi.ex4;
 
-import com.jp.daichi.ex5.utils.Utils;
+import com.jp.daichi.ex5shooting.utils.Utils;
 
 import java.awt.*;
 import java.awt.geom.Area;
