@@ -45,6 +45,8 @@ public class Display extends JPanel {
                 calculator.getOperator().input(operator);
             } else if (e.getKeyChar() == '=' || e.getKeyCode()==KeyEvent.VK_ENTER){
                 calculator.getOperator().inputEqual();
+            } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
+                calculator.getOperator().delete();
             } else {
                 calculator.getOperator().input(e.getKeyChar());
             }

@@ -1,5 +1,7 @@
 package com.jp.daichi.ex8painttool;
 
+import com.jp.daichi.ex8painttool.tools.Tool;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -86,6 +88,21 @@ public class SimpleCanvas implements Canvas {
 
     @Override
     public void to(int id) {
+
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
+
+    }
+
+    @Override
+    public void setTool(Tool tool) {
 
     }
 }
