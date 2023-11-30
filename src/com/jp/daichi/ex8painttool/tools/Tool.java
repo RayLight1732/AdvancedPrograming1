@@ -1,26 +1,22 @@
 package com.jp.daichi.ex8painttool.tools;
 
+import com.jp.daichi.ex8painttool.Canvas;
+import com.jp.daichi.ex8painttool.FinishHandler;
+import com.jp.daichi.ex8painttool.UpDateHandler;
+
 import java.awt.*;
 
 /**
  * 描画用ツール
  */
 public interface Tool {
-    /**
-     * 現在の状態で描画する
-     * @param g グラフィックオブジェクト
-     */
-    void drawPreview(Graphics2D g);
 
     /**
-     * キャンバスに描画する
-     * @param g グラフィックオブジェクト
+     * Pointを始点としてツールの実行処理を担当するオブジェクトを新しく作成
+     * @param canvas 対象となるキャンバス
+     * @param point 始点
+     * @param callback 終了した時に呼び出されるコールバック
+     * @return ツールの実行処理を担当するオブジェクト
      */
-    void draw(Graphics2D g);
-
-    /**
-     * 処理が終わっているかどうか
-     * @return 処理が終わっていたならtrue
-     */
-    boolean isEnd();
+    ToolExecutor createExecutor(Canvas canvas, Point point, UpDateHandler upDateHandler, FinishHandler finishHandler);
 }

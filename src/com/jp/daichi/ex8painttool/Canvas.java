@@ -52,6 +52,12 @@ public interface Canvas {
     Color getBackgroundColor();
 
     /**
+     * 描画色を取得
+     * @return 描画色
+     */
+    Color getColor();
+
+    /**
      * 背景色を設定
      * @param color 新しい色
      */
