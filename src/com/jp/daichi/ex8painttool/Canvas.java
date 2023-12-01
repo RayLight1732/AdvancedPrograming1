@@ -1,5 +1,6 @@
 package com.jp.daichi.ex8painttool;
 
+import com.jp.daichi.ex8painttool.canvasobject.CanvasObject;
 import com.jp.daichi.ex8painttool.tools.Tool;
 
 import java.awt.*;
@@ -58,16 +59,16 @@ public interface Canvas {
     Color getColor();
 
     /**
+     * 描画色を設定
+     * @param color 描画色
+     */
+    void setColor(Color color);
+
+    /**
      * 背景色を設定
      * @param color 新しい色
      */
     void setBackgroundColor(Color color);
-
-    /**
-     * 現在のキャンバスの状態を取得
-     * @return 現在のキャンバスの状態
-     */
-    BufferedImage getBufferedImage();
 
     /**
      * 履歴を取得
@@ -76,26 +77,32 @@ public interface Canvas {
     History getHistory();
 
     /**
-     * idの場所までundo,redoする
-     * @param id 履歴のid
-     */
-    void to(int id);
-
-    /**
-     * 何らかのキャンバスを更新しうるイベントが発生した際に呼ばれる
-     * 例:MouseClickEvent,MouseMoveEvent,MouseReleaseEvent
-     */
-    void update();
-
-    /**
      * 描画を行う
      * @param g グラフィックオブジェクト
      */
     void draw(Graphics2D g);
 
     /**
-     * 描画用のツールを設定
-     * @param tool ツール
+     * 最後に描画された際のBufferedImageを取得する
+     * @return 最後に描画された際のBufferedImage
      */
-    void setTool(Tool tool);
+    BufferedImage getBufferedImage();
+
+    /**
+     * 線の太さを取得する
+     * @return 線の太さ
+     */
+    int getThickNess();
+
+    /**
+     * 線の太さを設定する
+     * @param thickness 線の太さ
+     */
+    void setThickness(int thickness);
+
+    /**
+     * プレビューを設定(null可能)
+     * @param canvasObject プレビュー
+     */
+    void setPreview(CanvasObject canvasObject);
 }

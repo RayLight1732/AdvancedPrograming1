@@ -1,9 +1,8 @@
 package com.jp.daichi.ex8painttool.tools;
 
-import com.jp.daichi.ex8painttool.CanvasObject;
+import com.jp.daichi.ex8painttool.canvasobject.CanvasObject;
 
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
 
 /**
  * 描画ツールの実際の処理を担当する
@@ -26,5 +25,5 @@ public interface ToolExecutor {
      * 返されるマウスアダプターは常に同じインスタンスである必要がある
      * @return マウスアダプター
      */
-    MouseAdapter getMouseListener();
+    MouseAdapter getMouseAdapter();
 }

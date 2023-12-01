@@ -1,14 +1,14 @@
 package com.jp.daichi.ex8painttool.tools;
 
 import com.jp.daichi.ex8painttool.Canvas;
-import com.jp.daichi.ex8painttool.CanvasObject;
+import com.jp.daichi.ex8painttool.canvasobject.CanvasObject;
 import com.jp.daichi.ex8painttool.FinishHandler;
 import com.jp.daichi.ex8painttool.UpDateHandler;
+import com.jp.daichi.ex8painttool.canvasobject.TemplateShapeCanvasObject;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 /**
  * あらかじめ設定された形を描画するツール
@@ -28,7 +28,7 @@ public class TemplateShapeTool implements Tool {
 
     @Override
     public ToolExecutor createExecutor(Canvas canvas, Point point, UpDateHandler upDateHandler, FinishHandler finishHandler) {
-        return new TemplateShapeToolExecutor(factory, point,canvas.getColor(),upDateHandler,finishHandler);
+        return new TemplateShapeToolExecutor(factory, point,canvas.getColor(),canvas.getThickNess(),upDateHandler,finishHandler);
     }
 
     public static class TemplateShapeToolExecutor implements ToolExecutor {
@@ -36,6 +36,7 @@ public class TemplateShapeTool implements Tool {
         private final Point startPoint;
         private final ShapeFactory factory;
         private final Color color;
+        private final int thickness;
         private final UpDateHandler upDateHandler;
         private final FinishHandler finishHandler;
         private Shape shape;
@@ -62,57 +63,30 @@ public class TemplateShapeTool implements Tool {
          * @param point   始点
          * @param color 色
          */
-        public TemplateShapeToolExecutor(ShapeFactory factory, Point point,Color color,UpDateHandler upDateHandler,FinishHandler finishHandler) {
+        public TemplateShapeToolExecutor(ShapeFactory factory, Point point,Color color,int thickness,UpDateHandler upDateHandler,FinishHandler finishHandler) {
             this.factory = factory;
             this.startPoint = point;
             this.color = color;
+            this.thickness = thickness;
             this.upDateHandler = upDateHandler;
             this.finishHandler = finishHandler;
         }
 
         @Override
         public CanvasObject getPreviewCanvasObject() {
-            return new TemplateShapeCanvasObject(shape,color,null);
-            //TODO implement mouse listener
+            return new TemplateShapeCanvasObject(shape,color,thickness,true);
         }
 
         @Override
         public CanvasObject getFinalCanvasObject() {
-            return new TemplateShapeCanvasObject(shape,color,null);
+            return new TemplateShapeCanvasObject(shape,color,thickness,false);
         }
 
         @Override
-        public MouseAdapter getMouseListener() {
+        public MouseAdapter getMouseAdapter() {
             return mouseAdapter;
         }
     }
 
-    private static class TemplateShapeCanvasObject implements CanvasObject {
-        private final Shape shape;
-        private final MouseListener mouseListener;
-        private Color color;
-        private TemplateShapeCanvasObject(Shape shape,Color color, MouseListener mouseListener) {
-            this.shape = shape;
-            this.color = color;
-            this.mouseListener = mouseListener;
-        }
-
-        @Override
-        public void draw(Graphics2D g) {
-            g.setColor(color);
-            g.draw(shape);
-        }
-
-        @Override
-        public MouseListener mouseListener() {
-            return mouseListener;
-        }
-
-        @Override
-        public void setColor(Color color) {
-            this.color = color;
-        }
-
-    }
 }
 
