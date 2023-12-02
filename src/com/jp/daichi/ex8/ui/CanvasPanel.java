@@ -9,12 +9,16 @@ import com.jp.daichi.ex8.tools.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CanvasPanel extends JPanel {
 
     private Canvas canvas;
     private Tool tool = null;
     private ToolExecutor executor;
+    private final List<MouseAdapter> mouseAdapters = new ArrayList<>();
     private final UpDateHandler upDateHandler = e-> {
         canvas.setPreview(e.getPreviewCanvasObject());
         repaint();
@@ -30,6 +34,7 @@ public class CanvasPanel extends JPanel {
     };
 
     public CanvasPanel(Canvas canvas) {
+        setBackground(Color.BLACK);
         this.canvas = canvas;
         KeyManager manager = new KeyManager();
         addKeyListener(manager);
@@ -39,13 +44,51 @@ public class CanvasPanel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 requestFocus();
+                bypassMouseEvent(e,MouseAdapter::mousePressed);
                 if (tool != null && executor == null) {
-                    executor = tool.createExecutor(canvas,e.getPoint(),manager,upDateHandler,finishHandler);
+                    Point converted = new Point(convertX(e.getX()),convertY(e.getY()));
+                    executor = tool.createExecutor(canvas,converted,manager,upDateHandler,finishHandler);
                     addListeners(executor);
                 }
             }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                bypassMouseEvent(e,(MouseAdapter::mouseClicked));
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                bypassMouseEvent(e,(MouseAdapter::mouseReleased));
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                bypassMouseEvent(e,(MouseAdapter::mouseEntered));
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                bypassMouseEvent(e,(MouseAdapter::mouseExited));
+            }
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                MouseWheelEvent converted = convertMouseWheelEvent(e);
+                for (MouseAdapter a:new ArrayList<>(mouseAdapters)) {
+                    a.mouseWheelMoved(converted);
+                }
+            }
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                bypassMouseEvent(e,(MouseAdapter::mouseDragged));
+            }
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                bypassMouseEvent(e,(MouseAdapter::mouseMoved));
+            }
         };
+
+
         addMouseListener(adapter);
+        addMouseMotionListener(adapter);
+        addMouseWheelListener(adapter);
+
         KeyListener keyListener = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -65,10 +108,39 @@ public class CanvasPanel extends JPanel {
         addKeyListener(keyListener);
     }
 
+    private MouseEvent convertMouseEvent(MouseEvent e) {
+        return new MouseEvent(e.getComponent(),e.getID(),e.getWhen(),e.getModifiersEx(),convertX(e.getX()),convertY(e.getY()),e.getClickCount(),e.isPopupTrigger(),e.getButton());
+    }
+
+    private MouseWheelEvent convertMouseWheelEvent(MouseWheelEvent e) {
+        return new MouseWheelEvent(e.getComponent(),e.getID(),e.getWhen(),e.getModifiersEx(),convertX(e.getX()),convertY(e.getY()),e.getClickCount(),e.isPopupTrigger(),e.getScrollType(),e.getScrollAmount(),e.getWheelRotation());
+    }
+
+    /**
+     * パネル上のx座標をキャンバス上のx座標に変換
+     * @param x パネル上のx座標
+     * @return キャンバス上のx座標
+     */
+    public int convertX(int x) {
+        return (int)(x/scale);
+    }
+
+    /**
+     * パネル上のy座標をキャンバス上のy座標に変換
+     * @param y パネル上のy座標
+     * @return キャンバス上のy座標
+     */
+    public int convertY(int y) {
+        return (int)(y/scale);
+    }
+    
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         if (g instanceof Graphics2D g2d) {
+            AffineTransform transform = g2d.getTransform();
+            transform.scale(scale,scale);
+            g2d.setTransform(transform);
             canvas.draw(g2d);
         }
     }
@@ -101,16 +173,43 @@ public class CanvasPanel extends JPanel {
     }
 
     private void addListeners(ToolExecutor executor) {
-        MouseAdapter mouseAdapter = executor.getMouseAdapter();
-        addMouseListener(mouseAdapter);
-        addMouseMotionListener(mouseAdapter);
-        addMouseWheelListener(mouseAdapter);
+        mouseAdapters.add(executor.getMouseAdapter());
     }
 
     private void removeListeners(ToolExecutor executor) {
-        MouseAdapter mouseAdapter = executor.getMouseAdapter();
-        removeMouseListener(mouseAdapter);
-        removeMouseMotionListener(mouseAdapter);
-        removeMouseWheelListener(mouseAdapter);
+        mouseAdapters.remove(executor.getMouseAdapter());
+    }
+
+    private double scale = 1;
+
+    public void setScale(double scale) {
+        if (scale <= 0) {
+            throw new IllegalArgumentException("scale must be grater than 0");
+        } else {
+            this.scale = scale;
+        }
+    }
+
+    public double getScale() {
+        return scale;
+    }
+
+    public int getScaledCanvasWidth() {
+        return (int) (canvas.getWidth()*scale);
+    }
+
+    public int getScaledCanvasHeight() {
+        return (int)(canvas.getHeight()*scale);
+    }
+    
+    private void bypassMouseEvent(MouseEvent e, MouseEventExecutor proxy) {
+        MouseEvent converted = convertMouseEvent(e);
+        for (MouseAdapter a:new ArrayList<>(mouseAdapters)) {
+            proxy.run(a,converted);
+        }
+    }
+    
+    private interface MouseEventExecutor {
+        void run(MouseAdapter a,MouseEvent e);
     }
 }

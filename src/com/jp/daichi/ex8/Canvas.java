@@ -104,4 +104,8 @@ public interface Canvas {
      * @param canvasObject プレビュー
      */
     void setPreview(CanvasObject canvasObject);
+
+    void addColorChangeListener(ColorChangeListener listener);
+
+    void removeColorChangeListener(ColorChangeListener listener);
 }

@@ -4,10 +4,9 @@ import com.jp.daichi.ex8.*;
 import com.jp.daichi.ex8.Canvas;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class MainDisplay extends JPanel {
@@ -17,10 +16,16 @@ public class MainDisplay extends JPanel {
         ToolManager toolManager = new ToolManager();
         History history = new SimpleHistory();
         Canvas canvas = new SimpleCanvas(600,600,history);
+        canvas.setBackgroundColor(new Color(0,0,0,0));
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu1 = new JMenu("menu");
+        JMenu menu1 = new JMenu("メニュー");
         menuBar.add(menu1);
-        menu1.add(new JMenuItem("item"));
+
+        menu1.add(createBackgroundColorChanger(canvas));
+        menu1.add(new JMenuItem("新規作成"));
+        menu1.add(new JMenuItem("開く"));
+        menu1.add(new JMenuItem("上書き保存"));
+        menu1.add(new JMenuItem("名前を付けて保存"));
         JButton undo = new JButton("undo");
         menuBar.add(undo);
         undo.addActionListener(e ->{
@@ -38,28 +43,27 @@ public class MainDisplay extends JPanel {
         redo.addActionListener(e->{
             int index = history.getIndex(history.getCurrentHistoryID());
             List<HistoryStaff> all = history.getAll();
-            if (index != -1 && index+1 < all.size()) {
+            if (all.size() > 0 && history.getCurrentHistoryID() == -1) {//明示的に履歴0のとき
+                history.to(all.get(0).id());
+                repaint();
+            } else if (index != -1 && index+1 < all.size()) {
                 history.to(all.get(index+1).id());
                 repaint();
             }
         });
         frame.setJMenuBar(menuBar);
 
-        Ribbon ribbon = new Ribbon(toolManager);
+
+        JColorChooser colorChooser = new JColorChooser();
+        ActionListener okListener = e -> canvas.setColor(colorChooser.getColor());//okが押されたらキャンバスの色を変更するリスナー
+        Ribbon ribbon = new Ribbon(toolManager,colorChooser,okListener);
+        canvas.addColorChangeListener(ribbon);
         add(ribbon);
         layout.putConstraint(SpringLayout.NORTH,ribbon,0,SpringLayout.NORTH,this);
         layout.putConstraint(SpringLayout.SOUTH,ribbon,50,SpringLayout.NORTH,ribbon);
         layout.putConstraint(SpringLayout.WEST,ribbon,0,SpringLayout.WEST,this);
         layout.putConstraint(SpringLayout.EAST,ribbon,0,SpringLayout.EAST,this);
-        JColorChooser colorChooser = new JColorChooser();
-        ActionListener okListener = e -> canvas.setColor(colorChooser.getColor());//okが押されたらキャンバスの色を変更するリスナー
-        JDialog dialog = JColorChooser.createDialog(this,"color picker",true,colorChooser,okListener,null);
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                dialog.setVisible(true);
-            }
-        });
+
         JPanel viewPort = new JPanel();//ScrollPaneのViewPort用
         JScrollPane scrollPane = new JScrollPane(viewPort);//スクロール
         scrollPane.setBorder(null);//ボーダーなし
@@ -70,9 +74,65 @@ public class MainDisplay extends JPanel {
 
         add(scrollPane);
         layout.putConstraint(SpringLayout.NORTH,scrollPane,0,SpringLayout.SOUTH,ribbon);
-        layout.putConstraint(SpringLayout.SOUTH,scrollPane,0,SpringLayout.SOUTH,this);
         layout.putConstraint(SpringLayout.WEST,scrollPane,0,SpringLayout.WEST,this);
         layout.putConstraint(SpringLayout.EAST,scrollPane,0,SpringLayout.EAST,this);
+
+        BottomPanel.ValueConverter converter = value -> value/100.0;
+        BottomPanel bottomPanel = new BottomPanel(0,200,100,converter);
+        add(bottomPanel);
+        bottomPanel.getSlider().addChangeListener(e-> {
+            int value = ((JSlider)e.getSource()).getValue();
+            canvasPanel.setScale(converter.convert(value));
+            viewPort.revalidate();
+            scrollPane.revalidate();
+        });
+
+
+        layout.putConstraint(SpringLayout.SOUTH,scrollPane,0,SpringLayout.NORTH,bottomPanel);
+
+        layout.putConstraint(SpringLayout.NORTH,bottomPanel,-50,SpringLayout.SOUTH,bottomPanel);
+        layout.putConstraint(SpringLayout.SOUTH,bottomPanel,0,SpringLayout.SOUTH,this);
+        layout.putConstraint(SpringLayout.WEST,bottomPanel,0,SpringLayout.WEST,this);
+        layout.putConstraint(SpringLayout.EAST,bottomPanel,0,SpringLayout.EAST,this);
+    }
+
+    private JMenuItem createBackgroundColorChanger(Canvas canvas) {
+        JMenuItem menu = new JMenu("背景色変更");
+        JMenuItem choose = new JMenuItem("選択");
+        choose.addActionListener(e->{
+            Color color = JColorChooser.showDialog(MainDisplay.this,"背景色変更",null);
+            if (color != null) {
+                canvas.setBackgroundColor(color);
+                repaint();
+            }
+        });
+
+        JMenuItem foreground = new JMenuItem("描画色");
+        foreground.addActionListener(e->{
+            canvas.setBackgroundColor(canvas.getColor());
+            repaint();
+        });
+        JMenuItem transparent = new JMenuItem("透明");
+        transparent.addActionListener(e->{
+            canvas.setBackgroundColor(new Color(0,0,0,0));
+            repaint();
+        });
+        menu.add(choose);
+        menu.add(foreground);
+        menu.add(transparent);
+        return menu;
+    }
+
+    private JMenuItem createOpenMenu() {
+        JMenuItem menu = new JMenuItem("開く");
+        menu.addActionListener(e->{
+            JFileChooser fileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("edt");
+            fileChooser.setFileFilter(filter);
+            int result = fileChooser.showOpenDialog(MainDisplay.this);
+            //TODO
+        });
+        return menu;
     }
 
 
@@ -100,8 +160,8 @@ public class MainDisplay extends JPanel {
         public void layoutContainer(Container target) {
             int x = 0;
             int y = 0;
-            int canvasWidth = panel.getCanvas().getWidth();
-            int canvasHeight = panel.getCanvas().getHeight();
+            int canvasWidth = panel.getScaledCanvasWidth();
+            int canvasHeight = panel.getScaledCanvasHeight();
             if (canvasWidth < target.getWidth()) {
                 x = (target.getWidth()-canvasWidth)/2;//中央
             }
