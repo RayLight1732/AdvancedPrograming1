@@ -23,7 +23,7 @@ public class MainDisplay extends JPanel {
 
         menu1.add(createBackgroundColorChanger(canvas));
         menu1.add(new JMenuItem("新規作成"));
-        menu1.add(new JMenuItem("開く"));
+        menu1.add(createOpenMenu());
         menu1.add(new JMenuItem("上書き保存"));
         menu1.add(new JMenuItem("名前を付けて保存"));
         JButton undo = new JButton("undo");
@@ -127,10 +127,10 @@ public class MainDisplay extends JPanel {
         JMenuItem menu = new JMenuItem("開く");
         menu.addActionListener(e->{
             JFileChooser fileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("edt");
-            fileChooser.setFileFilter(filter);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("EditFile(*.edt)","edt");
+            fileChooser.setAcceptAllFileFilterUsed(false);
             int result = fileChooser.showOpenDialog(MainDisplay.this);
-            //TODO
+
         });
         return menu;
     }
