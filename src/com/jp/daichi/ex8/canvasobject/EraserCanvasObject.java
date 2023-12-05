@@ -3,9 +3,13 @@ package com.jp.daichi.ex8.canvasobject;
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.io.Serial;
 import java.util.List;
 
 public class EraserCanvasObject extends SimplePenCanvasObject {
+    @Serial
+    private static final long serialVersionUID = 2055910020186200371L;
+
     public EraserCanvasObject(Path2D path2D, int thickness) {
         super(path2D, new Color(0,0,0,0), thickness);
     }

@@ -2,9 +2,10 @@ package com.jp.daichi.ex8;
 
 import com.jp.daichi.ex8.canvasobject.CanvasObject;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface History {
+public interface History extends Serializable2 {
     /**
      * 現在の履歴の状態に新しい物を追加する
      * @param name 履歴の名前(重複可能)
@@ -44,5 +45,11 @@ public interface History {
      * @return インデックス(見つからなかった場合は-1)
      */
     int getIndex(int id);
+
+    /**
+     * すべて削除する
+     */
+    void clear();
+
 
 }

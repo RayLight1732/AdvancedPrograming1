@@ -7,56 +7,32 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.io.*;
 
 public class MainDisplay extends JPanel {
-    public MainDisplay(JFrame frame) {
+
+    private final MainFrame mainFrame;
+
+    private File saveFile;
+    private final Canvas canvas;
+
+    public MainDisplay(MainFrame frame,Canvas canvas) {
+        this(frame,canvas,null);
+    }
+    public MainDisplay(MainFrame frame, Canvas canvas, File saveFile) {
+        this.mainFrame = frame;
+        this.saveFile = saveFile;
+        this.canvas = canvas;
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
         ToolManager toolManager = new ToolManager();
-        History history = new SimpleHistory();
-        Canvas canvas = new SimpleCanvas(600,600,history);
         canvas.setBackgroundColor(new Color(0,0,0,0));
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu1 = new JMenu("メニュー");
-        menuBar.add(menu1);
-
-        menu1.add(createBackgroundColorChanger(canvas));
-        menu1.add(new JMenuItem("新規作成"));
-        menu1.add(createOpenMenu());
-        menu1.add(new JMenuItem("上書き保存"));
-        menu1.add(new JMenuItem("名前を付けて保存"));
-        JButton undo = new JButton("undo");
-        menuBar.add(undo);
-        undo.addActionListener(e ->{
-            List<HistoryStaff> staffList = history.painted();
-            if (staffList.size() == 1) {
-                history.to(-1);
-                repaint();
-            } else if (staffList.size() >= 2) {
-                history.to(staffList.get(staffList.size()-2).id());
-                repaint();
-            }
-        });
-        JButton redo = new JButton("redo");
-        menuBar.add(redo);
-        redo.addActionListener(e->{
-            int index = history.getIndex(history.getCurrentHistoryID());
-            List<HistoryStaff> all = history.getAll();
-            if (all.size() > 0 && history.getCurrentHistoryID() == -1) {//明示的に履歴0のとき
-                history.to(all.get(0).id());
-                repaint();
-            } else if (index != -1 && index+1 < all.size()) {
-                history.to(all.get(index+1).id());
-                repaint();
-            }
-        });
+        JMenuBar menuBar = new OriginalMenubar(this);
         frame.setJMenuBar(menuBar);
-
 
         JColorChooser colorChooser = new JColorChooser();
         ActionListener okListener = e -> canvas.setColor(colorChooser.getColor());//okが押されたらキャンバスの色を変更するリスナー
-        Ribbon ribbon = new Ribbon(toolManager,colorChooser,okListener);
+        Ribbon ribbon = new Ribbon(this,canvas,toolManager,colorChooser,okListener);
         canvas.addColorChangeListener(ribbon);
         add(ribbon);
         layout.putConstraint(SpringLayout.NORTH,ribbon,0,SpringLayout.NORTH,this);
@@ -96,47 +72,32 @@ public class MainDisplay extends JPanel {
         layout.putConstraint(SpringLayout.EAST,bottomPanel,0,SpringLayout.EAST,this);
     }
 
-    private JMenuItem createBackgroundColorChanger(Canvas canvas) {
-        JMenuItem menu = new JMenu("背景色変更");
-        JMenuItem choose = new JMenuItem("選択");
-        choose.addActionListener(e->{
-            Color color = JColorChooser.showDialog(MainDisplay.this,"背景色変更",null);
-            if (color != null) {
-                canvas.setBackgroundColor(color);
-                repaint();
-            }
-        });
-
-        JMenuItem foreground = new JMenuItem("描画色");
-        foreground.addActionListener(e->{
-            canvas.setBackgroundColor(canvas.getColor());
-            repaint();
-        });
-        JMenuItem transparent = new JMenuItem("透明");
-        transparent.addActionListener(e->{
-            canvas.setBackgroundColor(new Color(0,0,0,0));
-            repaint();
-        });
-        menu.add(choose);
-        menu.add(foreground);
-        menu.add(transparent);
-        return menu;
+    public Canvas getCanvas() {
+        return canvas;
     }
 
-    private JMenuItem createOpenMenu() {
-        JMenuItem menu = new JMenuItem("開く");
-        menu.addActionListener(e->{
-            JFileChooser fileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("EditFile(*.edt)","edt");
-            fileChooser.setAcceptAllFileFilterUsed(false);
-            int result = fileChooser.showOpenDialog(MainDisplay.this);
 
-        });
-        return menu;
+    public void save() throws IOException {
+        this.save(getDefaultSaveFile());
+    }
+    public void save(File file) throws IOException {
+        ObjectOutputStream oos =new ObjectOutputStream(new FileOutputStream(file));
+        oos.writeObject(canvas);
+        oos.close();
+    }
+
+    public File getDefaultSaveFile() {
+        return saveFile;
+    }
+
+    public void setDefaultSaveFile(File file) {
+        this.saveFile = file;
     }
 
 
     private static class OriginalLayout extends FlowLayout {
+        @Serial
+        private static final long serialVersionUID = 2550683786871576685L;
         private final CanvasPanel panel;
         private OriginalLayout(CanvasPanel panel) {
             this.panel = panel;
@@ -171,5 +132,9 @@ public class MainDisplay extends JPanel {
             panel.setSize(canvasWidth,canvasHeight);
             panel.setLocation(x,y);
         }
+    }
+
+    public MainFrame getMainFrame() {
+        return mainFrame;
     }
 }

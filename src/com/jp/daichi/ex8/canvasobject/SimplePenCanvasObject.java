@@ -4,11 +4,14 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.io.Serial;
 import java.util.List;
 
 
 public class SimplePenCanvasObject implements CanvasObject {
 
+    @Serial
+    private static final long serialVersionUID = -6455728789962855159L;
     protected Path2D path2D;
     protected Color color;
     protected final int thickness;
@@ -28,5 +31,10 @@ public class SimplePenCanvasObject implements CanvasObject {
     @Override
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    @Override
+    public void onDeserialized() {
+
     }
 }

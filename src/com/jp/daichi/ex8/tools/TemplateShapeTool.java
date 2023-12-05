@@ -18,24 +18,28 @@ import java.awt.event.MouseEvent;
 public class TemplateShapeTool implements Tool {
 
     private final ShapeFactory factory;
+    private final boolean fill;
+    private final String name;
 
     /**
      * factoryの形を描画する新しいツールのインスタンスを作成
      *
      * @param factory 描画する形
      */
-    public TemplateShapeTool(ShapeFactory factory) {
+    public TemplateShapeTool(ShapeFactory factory,boolean fill,String name) {
         this.factory = factory;
+        this.fill = fill;
+        this.name = name;
     }
 
     @Override
     public ToolExecutor createExecutor(Canvas canvas, Point point, KeyManager manager, UpDateHandler upDateHandler, FinishHandler finishHandler) {
-        return new TemplateShapeToolExecutor(factory, point,canvas.getColor(),canvas.getThickNess(),upDateHandler,finishHandler);
+        return new TemplateShapeToolExecutor(factory, point,canvas.getColor(),canvas.getThickNess(),upDateHandler,finishHandler,fill);
     }
 
     @Override
     public String getName() {
-        return "名前";//TODO
+        return name;
     }
 
     public static class TemplateShapeToolExecutor implements ToolExecutor {
@@ -47,6 +51,7 @@ public class TemplateShapeTool implements Tool {
         private final UpDateHandler upDateHandler;
         private final FinishHandler finishHandler;
         private Shape shape;
+        private boolean fill;
         private final MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -70,23 +75,24 @@ public class TemplateShapeTool implements Tool {
          * @param point   始点
          * @param color 色
          */
-        public TemplateShapeToolExecutor(ShapeFactory factory, Point point,Color color,int thickness,UpDateHandler upDateHandler,FinishHandler finishHandler) {
+        public TemplateShapeToolExecutor(ShapeFactory factory, Point point,Color color,int thickness,UpDateHandler upDateHandler,FinishHandler finishHandler,boolean fill) {
             this.factory = factory;
             this.startPoint = point;
             this.color = color;
             this.thickness = thickness;
             this.upDateHandler = upDateHandler;
             this.finishHandler = finishHandler;
+            this.fill = fill;
         }
 
         @Override
         public CanvasObject getPreviewCanvasObject() {
-            return new TemplateShapeCanvasObject(shape,color,thickness,true);
+            return new TemplateShapeCanvasObject(shape,color,thickness,true,fill);
         }
 
         @Override
         public CanvasObject getFinalCanvasObject() {
-            return new TemplateShapeCanvasObject(shape,color,thickness,false);
+            return new TemplateShapeCanvasObject(shape,color,thickness,false,fill);
         }
 
         @Override

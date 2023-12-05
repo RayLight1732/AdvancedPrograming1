@@ -1,12 +1,14 @@
 package com.jp.daichi.ex8.canvasobject;
 
+import com.jp.daichi.ex8.Serializable2;
+
 import java.awt.*;
 import java.io.Serializable;
 
 /**
  * キャンバス上のオブジェクト
  */
-public interface CanvasObject extends Serializable {
+public interface CanvasObject extends Serializable2 {
     /**
      * 描画を行う
      * @param g グラフィックオブジェクト

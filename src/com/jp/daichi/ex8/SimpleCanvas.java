@@ -6,20 +6,27 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleCanvas implements Canvas {
+public class SimpleCanvas implements Canvas{
+
+    private static final Color transparent1 = new Color(219,219,219);
+    private static final Color transparent2 = Color.WHITE;
+
+    @Serial
+    private static final long serialVersionUID = 8217484315767663802L;
 
     private final History history;
-    private BufferedImage bufferedImage = null;
+    private transient BufferedImage bufferedImage = null;
     private int width;
     private int height;
     private Color backgroundColor = Color.WHITE;
     private Color color = Color.BLACK;
-    private int thickness = 1;
-    private CanvasObject preview = null;
-    private final List<ColorChangeListener> colorChangeListeners = new ArrayList<>();
+    private int thickness = 10;
+    private transient CanvasObject preview = null;
+    private transient List<ColorChangeListener> colorChangeListeners = new ArrayList<>();
 
     public SimpleCanvas(int width, int height, History history) {
         this.width = width;
@@ -91,8 +98,6 @@ public class SimpleCanvas implements Canvas {
         return history;
     }
 
-    private static final Color transparent1 = new Color(219,219,219);
-    private static final Color transparent2 = Color.WHITE;
     @Override
     public void draw(Graphics2D g) {
         bufferedImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -185,4 +190,9 @@ public class SimpleCanvas implements Canvas {
         colorChangeListeners.remove(listener);
     }
 
+    @Override
+    public void onDeserialized() {
+        colorChangeListeners = new ArrayList<>();
+        history.onDeserialized();
+    }
 }

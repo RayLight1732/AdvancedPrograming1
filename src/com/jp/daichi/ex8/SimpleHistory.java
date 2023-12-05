@@ -1,11 +1,15 @@
 package com.jp.daichi.ex8;
 
 import com.jp.daichi.ex8.canvasobject.CanvasObject;
+import com.jp.daichi.ex8.canvasobject.ClearObject;
 
+import java.io.Serial;
 import java.util.*;
 
 public class SimpleHistory implements History {
-    private List<HistoryStaff> list = new ArrayList<>();
+    @Serial
+    private static final long serialVersionUID = 3763579663798004361L;
+    private ArrayList<HistoryStaff> list = new ArrayList<>();
     private int current = -1;
     @Override
     public int add(String name, CanvasObject obj) {
@@ -15,7 +19,7 @@ public class SimpleHistory implements History {
         if (index == -1) {
             list.clear();
         } else {
-            list = list.subList(0,index+1);
+            list = new ArrayList<>(list.subList(0,index+1));
         }
         list.add(new HistoryStaff(newId,name,obj));
         current = newId;
@@ -71,4 +75,15 @@ public class SimpleHistory implements History {
         return -1;
     }
 
+    @Override
+    public void clear() {
+        if (!(list.get(current).canvasObject() instanceof ClearObject)) {
+            add("clear", new ClearObject());
+        }
+    }
+
+    @Override
+    public void onDeserialized() {
+
+    }
 }

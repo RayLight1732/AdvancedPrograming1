@@ -4,11 +4,12 @@ import com.jp.daichi.ex8.canvasobject.CanvasObject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
 /**
  * 描画用の領域
  */
-public interface Canvas {
+public interface Canvas extends Serializable2 {
     /**
      * キャンバスの幅を取得
      * @return キャンバスの幅
@@ -108,4 +109,5 @@ public interface Canvas {
     void addColorChangeListener(ColorChangeListener listener);
 
     void removeColorChangeListener(ColorChangeListener listener);
+
 }

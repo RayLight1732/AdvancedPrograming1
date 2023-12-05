@@ -38,7 +38,6 @@ public class CanvasPanel extends JPanel {
         this.canvas = canvas;
         KeyManager manager = new KeyManager();
         addKeyListener(manager);
-        canvas.setThickness(10);
         canvas.setColor(new Color(100,0,0,100));
         MouseAdapter adapter = new MouseAdapter() {
             @Override
@@ -89,23 +88,6 @@ public class CanvasPanel extends JPanel {
         addMouseMotionListener(adapter);
         addMouseWheelListener(adapter);
 
-        KeyListener keyListener = new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyChar() == '1') {
-                    setTool(new SimplePen());
-                } else if (e.getKeyChar()=='2') {
-                    setTool(new TemplateShapeTool(ShapeFactories.ELLIPSE.getFactory()));
-                } else if (e.getKeyChar()=='3') {
-                    setTool(new TemplateShapeTool(ShapeFactories.RECTANGLE.getFactory()));
-                } else if (e.getKeyChar()=='4') {
-                    setTool(new Picker());
-                } else if (e.getKeyChar()=='5') {
-                    setTool(new Eraser());
-                }
-            }
-        };
-        addKeyListener(keyListener);
     }
 
     private MouseEvent convertMouseEvent(MouseEvent e) {
