@@ -5,7 +5,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * @see ShapeFactory を集めたクラス
+ * ShapeFactoryを集めたクラス
  */
 public enum ShapeFactories {
     RECTANGLE(Rectangle::new),

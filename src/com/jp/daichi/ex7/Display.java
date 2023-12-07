@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.List;
 
 /**
- *
+ *表示用ディスプレイ
  */
 public class Display extends JPanel {
     /*

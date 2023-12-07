@@ -12,14 +12,35 @@ public abstract class AColoredObject extends AObject implements Colored {
     private Color color;
     private Color outLine;
 
+    /**
+     * x,y,ベクトルが指定された新しいインスタンスを返す
+     * @param x x座標
+     * @param y y座標
+     * @param vector ベクトル
+     */
     public AColoredObject(double x, double y, Vec2d vector) {
         this(x,y,vector,null);
     }
 
+    /**
+     * x,y,ベクトル,色が指定された新しいインスタンスを返す
+     * @param x x座標
+     * @param y y座標
+     * @param vector ベクトル
+     * @param color 色(nullの場合、連続的に変化)
+     */
     public AColoredObject(double x, double y, Vec2d vector,Color color) {
         this(x,y,vector,color,null);
     }
 
+    /**
+     * x,y,ベクトル,色,枠線の色が指定された新しいインスタンスを返す
+     * @param x x座標
+     * @param y y座標
+     * @param vec2d ベクトル
+     * @param color 色(nullの場合、連続的に変化)
+     * @param outLine 枠線の色(nullの場合、枠線は描画されない)
+     */
     public AColoredObject(double x,double y, Vec2d vec2d,Color color,Color outLine) {
         super(x,y,vec2d);
         this.color = color;

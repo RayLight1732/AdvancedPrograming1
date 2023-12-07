@@ -23,7 +23,7 @@ public class SimpleShapeFactory implements ShapeFactory {
     }
 
     /**
-     * @see ShapeFactory の別の表現
+     * ShapeFactoryの別の表現
      */
     public interface InnerShapeFactory {
         /**

@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * 描画用
  * 同種のエンティティには同じインスタンスが使用される
- * @param <T>
+ * @param <T> 対象のGameObject
  */
 public interface Render<T extends GameObject> {
     /**

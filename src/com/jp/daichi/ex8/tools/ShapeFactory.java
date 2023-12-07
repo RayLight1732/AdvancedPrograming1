@@ -3,7 +3,7 @@ package com.jp.daichi.ex8.tools;
 import java.awt.*;
 
 /**
- * @see Shape のインスタンスを作成
+ *　Shapeのインスタンスを作成
  */
 public interface ShapeFactory {
     /**

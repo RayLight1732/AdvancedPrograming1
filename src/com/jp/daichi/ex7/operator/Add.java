@@ -4,6 +4,9 @@ import com.jp.daichi.ex7.Fraction;
 
 import java.math.BigDecimal;
 
+/**
+ * 足し算
+ */
 public class Add implements Operator {
 
     @Override

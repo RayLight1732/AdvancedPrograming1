@@ -274,7 +274,13 @@ public abstract class AObject {
         }
     }
 
-
+    /**
+     * 座標をx,yとして描画を行う。stepは0~1で0が前回ティックが行われた瞬間、1が次のティック処理が行われる直前
+     * @param g グラフィックオブジェクト
+     * @param x x座標
+     * @param y y座標
+     * @param step 次のティックまでの経過時間
+     */
     protected void draw(Graphics2D g,double x,double y,double step) {
         g.fill(getArea(x, y));//図形描画
     }

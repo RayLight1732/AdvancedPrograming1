@@ -43,6 +43,10 @@ public class Formula implements NumberObject,Cloneable {
         }
     }
 
+    /**
+     * 計算を行う
+     * @return 計算結果
+     */
     public Fraction calculate() {
         Formula formula = this;
         while (formula.list.size() > 1) {
@@ -92,6 +96,11 @@ public class Formula implements NumberObject,Cloneable {
         return calculate().toPlainString();
     }
 
+    /**
+     * 式を単純な文字列に変換する
+     * @param expandChild 子に式が含まれている場合、その式も展開するか
+     * @return 文字列
+     */
     public String toPlainString(boolean expandChild) {
         StringBuilder builder = new StringBuilder();
         for (MathObject o : list) {
@@ -103,6 +112,13 @@ public class Formula implements NumberObject,Cloneable {
         return builder.toString();
     }
 
+    /**
+     * builderの後にMathObjectを追加する
+     * @param builder 対象となるbuilder
+     * @param o 対象となるMathObject
+     * @param expandChild MathObjectが式の場合、その子も展開するか
+     * @param isChild MathObjectが子であるかどうか
+     */
     protected void append(StringBuilder builder,MathObject o,boolean expandChild,boolean isChild) {
         if (expandChild && o instanceof Formula formula) {
             builder.append(formula.toPlainString(expandChild,isChild));
@@ -119,6 +135,13 @@ public class Formula implements NumberObject,Cloneable {
             builder.append(o);
         }
     }
+
+    /**
+     * 式を単純な文字列に変換する
+     * @param expandChild 子に式が含まれている場合、その式も展開するか
+     * @param isChild この式が子であるか
+     * @return 文字列
+     */
     protected String toPlainString(boolean expandChild,boolean isChild) {
         if (isChild) {
             StringBuilder builder = new StringBuilder();
@@ -138,28 +161,52 @@ public class Formula implements NumberObject,Cloneable {
         return calculate();
     }
 
+    /**
+     * 括弧が閉じられているかどうか
+     * 式の計算には影響しない装飾的な括弧
+     * @return 閉じられているならtrue
+     */
     public boolean isCloseBracket() {
         return isCloseBracket;
     }
 
+    /**
+     * 括弧が閉じられているかを設定する
+     * @param closeBracket 括弧が閉じられているか
+     */
     public void setCloseBracket(boolean closeBracket) {
         isCloseBracket = closeBracket;
     }
 
+    /**
+     * この式に含まれている演算子も含めた要素の数を返す。
+     * @return 要素の数(演算子も含む)
+     */
     public int size() {
         return list.size();
     }
 
+    /**
+     * この式に含まれている要素のリストのコピーを返す
+     * @return この式に含まれている要素のコピー
+     */
     public List<MathObject> getList() {
         return new ArrayList<>(list);
     }
 
+    /**
+     * 最後尾の要素を削除する
+     */
     public void removeTail() {
         if (list.size() >= 1) {
             list.remove(list.size()-1);
         }
     }
 
+    /**
+     * 最後尾の要素を取得する
+     * @return 最後尾の要素
+     */
     public MathObject getTail() {
         if (list.size() >= 1) {
             return list.get(list.size()-1);
@@ -168,10 +215,18 @@ public class Formula implements NumberObject,Cloneable {
         }
     }
 
+    /**
+     * この式が空かどうか
+     * @return 空の場合true
+     */
     public boolean isEmpty() {
         return list.isEmpty();
     }
 
+    /**
+     * 閉じ括弧の記号を取得する
+     * @return 閉じ括弧
+     */
     public String getCloseBracketSymbol() {
         return ")";
     }

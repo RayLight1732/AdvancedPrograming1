@@ -7,12 +7,21 @@ import com.jp.daichi.ex4.Vec2d;
 import java.awt.*;
 import java.awt.geom.Area;
 
+/**
+ * 抽象的なゲーム内のエンティティ
+ */
 public abstract class AGameEntity extends AGameObject implements GameEntity,OldRenderEntity {
 
     protected final Game game;//対象のゲーム
     protected double size;//サイズ
     protected RotationalObject displayEntity;//描画用オブジェクト
 
+    /**
+     * 新しいインスタンスを生成
+     * @param game 所属するゲーム
+     * @param size サイズ
+     * @param displayEntity 表示用のエンティティ
+     */
     public AGameEntity(Game game,double size,RotationalObject displayEntity) {
         this.game = game;
         this.size = size;
@@ -34,6 +43,10 @@ public abstract class AGameEntity extends AGameObject implements GameEntity,OldR
         doTick_(deltaTime);
     }
 
+    /**
+     * ティック処理を行う
+     * @param deltaTime 前回からの経過時間(秒)
+     */
     protected void doTick_(double deltaTime){}
 
 
